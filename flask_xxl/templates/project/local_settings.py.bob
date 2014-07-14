@@ -1,0 +1,12 @@
+
+class LocalConfig(object):
+    {{% if local_settings.recaptcha_public %}}
+        RECAPTCHA_PUBLIC_KEY = '{{{ local_settings.recaptcha_public }}}'
+    {{% endif %}}
+    {{% if local_settings.recaptcha_private %}}
+        RECAPTCHA_PRIVATE_KEY = '{{{ local_settings.recaptcha_private }}}'
+    {{% endif %}}
+    SECRET_KEY = 'A Secret Shhh'
+    {{% if project.db_uri %}}
+        SQLALCHEMY_DATABASE_URI = '{{{ project.db_uri }}}'
+    {{% endif %}}
