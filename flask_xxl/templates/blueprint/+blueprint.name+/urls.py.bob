@@ -1,0 +1,8 @@
+from {{{ blueprint.name }}} import {{{ blueprint.name }}}
+from .views import Main{{{ blueprint.name|title }}}View
+
+routes = [
+    (({{{ blueprint.name }}}),
+        ('/',Main{{{ blueprint.name|title }}}View.as_view('index')),
+    )
+]
