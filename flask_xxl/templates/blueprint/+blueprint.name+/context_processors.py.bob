@@ -1,0 +1,21 @@
+'''
+    context_processors.py
+
+    use this file to register context processors on your app
+
+    just define a function that returns a dict,
+    and the contents of that dict will be avialible in your templates.
+
+    example:
+    def fake_ctx_processor():
+        return {
+            'var':'val',
+            'boo':'far',
+	}
+
+    then register in settings.py under CONTEXT_PROCESSORS
+
+    '{{{ blueprint.name }}}.context_processors.fake_ctx_processor',
+
+    dont forget to always add the ending comma
+'''
