@@ -5,8 +5,15 @@
     ~~~~~~~~~~~
 """
 from sqlalchemy.ext.declarative import declared_attr
-from ext import db
+from flask import current_app
 
+class SQLAlchemyMissingException(Exception):
+    pass
+
+try:
+    db = current_app.extensions['sqlalchemy'].db
+except AttributeError, e:
+    raise SQLAlchemyMissingException('Need sqlalchemy installed to use basemodel')
 
 class BaseMixin(object):
     __table_args__ = {'extend_existing': True}
