@@ -5,9 +5,17 @@
     ~~~~~~~~~~~
 """
 from sqlalchemy.ext.declarative import declared_attr
-from ext import db
+from base import Model
+from sqlalchemy.ext.declarative import as_declarative
+from sqlalchemy.ext.declarative import declarative_base
+from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty
 
 
+
+class ModelDeclarativeMeta(_BoundDeclarativeMeta):
+    pass
+
+@as_declarative(name='Model',metaclass=ModelDeclarativeMeta)
 class BaseMixin(object):
     __table_args__ = {'extend_existing': True}
 
