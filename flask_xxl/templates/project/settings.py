@@ -24,16 +24,16 @@ class BaseConfig(LocalConfig):
     #   in bp.urls.py file make routes
     #   routes = [
     #       ((bp_name),
-    #           ('/url_rule',ViewClass.as_view('view')),
+    #           ('/url_rule',ViewClass.as_view('endpoint')),
     #           ('/next_url',view_func)),
     #       ]
     #
     #####################################################
     URL_MODULES = [
             '{{{project.url_module}}}.urls.routes',
-            #'admin.urls.routes',
-            #'auth.urls.routes',
-            #'page.urls.routes',
+            #'flask.ext.xxl.admin.urls.routes',
+            #'flask.ext.xxl.auth.urls.routes',
+            #'flask.ext.xxl.page.urls.routes',
     ]
     
     #####################################################
@@ -46,10 +46,10 @@ class BaseConfig(LocalConfig):
     #####################################################
     BLUEPRINTS = [
             '{{{project.name}}}.{{{project.name}}}',
-            #'admin.admin',
-            #'menu.menu',
-            #'page.page',
-            #'auth.auth',
+            #'flask.ext.xxl.admin.admin',
+            #'flask.ext.xxl.menu.menu',
+            #'flask.ext.xxl.page.page',
+            #'flask.ext.xxl.auth.auth',
     ]
 
     ####################################################
@@ -81,21 +81,21 @@ class BaseConfig(LocalConfig):
     ######################################################
 
     CONTEXT_PROCESSORS = [
-            #'core.context_processors.common_context',
-            #'core.context_processors.common_forms',
-            #'menu.context_processors.frontend_nav',
-            #'menu.context_processors.admin_nav',
-            #'auth.context_processors.user_context',
-            #'core.context_processors.add_is_page',
+            #'flask.ext.xxl.context_processors.add_is_page',
+            #'flask.ext.xxl.context_processors.common_context',
+            #'flask.ext.xxl.context_processors.common_forms',
+            #'flask.ext.xxl.menu.context_processors.frontend_nav',
+            #'flask.ext.xxl.menu.context_processors.admin_nav',
+            #'flask.ext.xxl.auth.context_processors.user_context',
     ]
 
     TEMPLATE_FILTERS = [
-            'core.filters.date',
-            'core.filters.date_pretty',
-            'core.filters.datetime',
-            'core.filters.pluralize',
-            'core.filters.month_name',
-            'core.filters.markdown',
+            'flask.ext.xxl.filters.date',
+            'flask.ext.xxl.filters.date_pretty',
+            'flask.ext.xxl.filters.datetime',
+            'flask.ext.xxl.filters.pluralize',
+            'flask.ext.xxl.filters.month_name',
+            'flask.ext.xxl.filters.markdown',
     ]
 
     CONTACT_FORM_SETTINGS = {
@@ -130,8 +130,8 @@ class BaseConfig(LocalConfig):
     BLOG_TITLE = 'Dynamic'
     BLOG_CONTENT = 'some text to put into my<br />Blog'
 
-def get_choices():
-    return BaseConfig.CONTACT_FORM_SETTINGS['OPTIONS']
+def get_choices(option):
+    return BaseConfig.DYNAMIC_SETTINGS[option]
 
 
 class DevelopmentConfig(BaseConfig):

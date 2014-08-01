@@ -4,12 +4,19 @@
     basemodels.py
     ~~~~~~~~~~~
 """
-from sqlalchemy.ext.declarative import declared_attr
-from base import Model
+from flask import current_app
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declared_attr
 from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty
 
+class SQLAlchemyMissingException(Exception):
+    pass
+
+try:
+    db = current_app.extensions['sqlalchemy'].db
+except AttributeError, e:
+    raise SQLAlchemyMissingException('Need sqlalchemy installed to use basemodel')
 
 
 class ModelDeclarativeMeta(_BoundDeclarativeMeta):

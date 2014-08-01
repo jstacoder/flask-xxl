@@ -1,0 +1,5 @@
+from flask.ext.xxl.basemodels import BaseMixin
+from ext import db
+
+class {{{ blueprint.model }}}(BaseMixin,db.Model):
+    name = db.Column(db.String(255),nullable=False,unique=True)

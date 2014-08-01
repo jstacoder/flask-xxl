@@ -1,0 +1,15 @@
+from flask.ext.xxl.baseviews import BaseView
+
+class Main{{{ blueprint.name|title }}}View(BaseView):
+    _template = ''
+    _form = None
+    _form_obj = None
+    _form_args = {}
+    _context = {}
+    
+    def get(self):
+        return self.render()
+
+    def post(self):
+        return self.render()
+
