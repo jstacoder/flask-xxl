@@ -62,7 +62,7 @@ class BaseMixin(object):
         if not 'id' in exclude:
             exclude.append('id')
         rtn = []
-        for col in cls.__table__.c._all_columns:
+        for col in cls.__table__.c._all_cols:
             if not col.name in exclude:
                 rtn.append((col.name,_clean_name(col.name)))
         for attr in dir(cls):
