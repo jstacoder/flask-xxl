@@ -1,0 +1,319 @@
+{# 
+    render_nav_dropdown() 
+    @args: 
+        label(str)
+        link_list(list)
+    @notes:
+    link_list s/b list of either (text,endpoint) or ('sep',None) tuples 
+ #}
+{% macro render_nav_dropdown(label,link_list) %}
+    <a class=dropdown-toggle data-toggle=dropdown>{{ label }}<b class=caret></b></a>
+    <ul class=dropdown-menu>
+        {% for action,endpoint in link_list.items() %}
+            {% if not endpoint  is none %}
+                <li><a href="{{ url_for(endpoint) }}">{{ action }}</a></li>
+            {% else %}
+                {% if action == 'sep' %}
+                    <li class=divider></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{#
+    render_nav_link() 
+    @args:
+        label(str)
+        endpoint(str)
+    @notes:
+        highlights link with given endpoint
+#}
+{% macro render_nav_link(label,endpoint) %}
+    <li{% if request.endpoint == endpoint %} class=active{% endif %}><a href="{{ url_for(label,**kwargs) }}">{{ endpoint }}</a></li>
+{% endmacro %}
+
+{#
+    render_navbar()
+    @args:
+        brand(str)
+        nav_links(list)
+        dropdowns(list)
+        inverse(bool) - False
+        auth(bool) - False 
+    @notes:
+        create navbar (mainly for admin interface)
+#}
+{% macro render_navbar(brand,nav_links,dropdowns,inverse=false,auth=false) %}
+    {% if inverse %}
+        {% set type = 'inverse' %}
+    {% else %}
+        {% set type = 'default' %}
+    {% endif %}
+    <div class="navbar navbar-{{ type }} navbar-fixed-top" role=navigation>
+        <div class=fluid-container>
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class=navbar-brand href="/">{{ brand }}</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    {% for endpoint,txt in nav_links %}
+                        {{ render_nav_link(txt,endpoint) }}
+                    {% endfor %}
+                    {% if dropdowns %}
+                        {% for dropdown in dropdowns %}
+                            {% for label,link_list in dropdown.items() %}
+                                <li class=dropdown>
+                                    {{ render_nav_dropdown(label,link_list) }}
+                                </li>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+                {% if auth %}
+                <ul class="nav navbar-nav navbar-right" style="margin-right:5px!important">
+                    <li>
+                        <a href="{{ url_for('auth.logout') }}" class="navbar-link">logout</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{# 
+    render_bs3_field()
+    @args:
+        field(wtforms.Field)
+        label(bool) - True
+
+    @notes:
+        render field with bs3 styles
+#}
+{% macro render_field(field,label=true) %}
+    <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_','') }}">
+        {% if (field.type != 'HiddenField' and field.type != 'CSRFTokenField') and label %}
+            <label for="{{ field.id }}" class="control-label">{{ field.label }}</label>
+        {% endif %}
+        {{ field(class_='form-control',**kwargs) }}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# 
+    render_checkbox()
+    @args:
+        field(wtforms.Field)
+    @notes:
+        renders bs3 compliant checkbox
+#}
+{% macro render_checkbox(field) %}
+    <div class="checkbox">
+        <label>
+                {{ field(type='checkbox',**kwargs) }} {{ field.label }}
+        </label>
+    </div>
+{% endmacro %}
+
+{# 
+    render_radio()
+    @args:
+        field(wtforms.Field)
+    @notes:
+        renders bs3 compliant radio select
+#}
+{% macro render_radio(field) %}
+    {% for value,label,_ in field.iter_choices() %}
+        <div class=radio>
+            <label>
+                <input type=radio name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">{{ label }}
+            </label>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_content_link(field) %}
+    {% if 'page' in request.url %}
+        {% if 'edit' in request.url %}
+            {% set link_url = 'admin.edit_page_content' %}
+        {% else %}
+            {% set link_url = 'admin.page_content' %}
+        {% endif %}
+    {% elif 'block' in request.url %}
+        {% if 'edit' in request.url %}
+            {% set link_url = 'admin.edit_block_content' %}
+        {% else %}
+            {% set link_url = 'admin.block_content' %}
+        {% endif %}
+    {% endif %}
+    <a class="btn btn-default" href="{%- if not obj is defined %}{{ url_for(link_url) }}{% else %}
+            {{ obj._get_edit_content_url() }}{% endif -%}">Edit Content</a>
+{% endmacro %}
+
+
+{% macro render_form(form,action='',action_text='Submit',class_='',btn_class='btn btn-default') %}
+    <form method="POST" action="{{ action }}" role=form class="{{ class_ }}">
+        {{ form.hidden_tag() if form.hidden_tag is defined}}
+        {% if caller %}
+            {{ caller() }}
+        {% else %}
+            {% set c = 0 %}
+            {% for f in form %}
+                {% set c = 1  + 1 %}
+            {% endfor %}
+            {% if c > 2 %}
+            <div class=row>
+            {% endif %}
+                {% set row = 1 %}
+            {% for f in form %}
+                {% if f == none %}
+                {% else %}
+                    {% if row == 1 %}
+                        {% set row = 0 %}
+                            {% if c > 2 %}
+                                <div class=col-md-6>
+                            {% endif %}
+                    {% else %}  
+                        {% set row = 1 %}
+                        &nbsp;
+                        {% endif %}
+                {% endif %}
+                {% if f.flags.required %}<sub style="color:red;font-size:2em;">*</sub/>&nbsp;
+                    <span style="color:red;">Required</span><br/>{% endif %}
+                {% if f.type == 'FormField' %}
+                    {{ f.hidden_tag() }}
+                    {% for field in f %}
+                        {% if not field.type == 'CSRFTokenField' %}
+                            {{ field.label }}{{ field }}
+                        {% endif %}
+                    {% endfor %}
+                {% elif form._has_pagedown %}
+                        {{ f(rows = 10, style = 'width:100%') }}
+                {% else %}
+                        {% if f.name == 'content' %}
+                            {% if 'content' in request.endpoint %}
+                                {% if obj_id %}                
+                                    {{ render_content_link(f,obj_id) }}
+                                {% else %}
+                                    {{ render_content_link(f) }}
+                                {% endif %}
+                            {% else %}
+                                <div class=wrapper>
+                                    {{ render_field(f) }}
+                                </div>
+                            {% endif %} 
+                        {% elif f.type == 'BooleanField' %}
+                            {{ render_checkbox(f) }}
+                        {% elif f.type == 'RadioField' %}
+                            {{ render_radio(f) }}
+                        {% elif f.type ==  'QuerySelectField' %}
+                            {{ render_field(f) }}
+                        {% elif f.type ==  'QuerySelectMultipleField' %}
+                            {{ render_field(f) }}
+                        {% elif f.type == 'TextField' or f.type == 'StringField' %}
+                            {{ f.label }}{{ f(class_='form-control') }}
+                        {% else %}
+                            {{ render_field(f) }}
+                        {% endif %}
+                        {% if row == 1 %}
+                            &nbsp;
+                            {% set row = 0 %}
+                        {% else %}
+                            {% if c > 2 %}
+                        </div>
+                            {% endif %}
+                            {% set row = 1 %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <button type="submit" class="{{ btn_class }}">{{ action_text }}</button>
+    </form>
+{% endmacro %}
+
+{% macro render_panel_form(form,heading='',action='',action_text='Submit',class_='form',btn_class='btn btn-default') %}
+    <div class=container>
+        <div class="row centered-form">
+            <div class="col-xs-6 col-sm-6 col-md-11">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ heading }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ render_form(form=form,action='',action_text=action_text,btn_class=btn_class) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+{% endmacro %}
+
+{% macro render_dual_panel_form(form_one_args,form_two_args) %}
+{# form_args should be   (form, heading='',action='',action_text='Submit',class_='form',btn_class='btn btn-default') #}
+
+    <div class=container>
+        <div class="row centered-form">
+            <div class="col-xs-6 col-sm-6 col-md-11">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ heading }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ render_form(form=form,action='',action_text=action_text,btn_class=btn_class) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+{% endmacro %}
+
+{% macro render_pagination(pag) %}
+    <ul class="pager">
+        <li class=previous><a {% if  pag.has_prev == false %}class=disabled {% endif %}href="{{ pag.prev_link }}">Previous</a></li>
+        <li class=next><a {% if pag.has_next == false %}class=disabled {% endif %}href="{{ pag.next_link }}">Next</a></li>
+    </ul>
+{% endmacro %}
+
+
+{% macro render_centered_form(form,heading='',action='',action_text='Submit',class_='form',btn_class='btn btn-default') %}
+    <div class=container>
+        <div class="row centered-form">
+            <div class=col-md-5>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ heading }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ render_form(form=form,action='',action_text=action_text,btn_class=btn_class) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_nav_sidebar(link_list,title) %}
+    <ul class="nav nav-tabs nav-stacked">
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+        <li><a href="#">link</a></li>
+    </ul>
+{% endmacro %}
+
+

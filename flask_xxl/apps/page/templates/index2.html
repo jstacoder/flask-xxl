@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+    {% block header %}
+        {% include 'header.html' with context %}
+    {% endblock header %}
+    {% block body %}
+    {% if articles %}
+        {% for a in articles %}
+            {{ a }}
+        {% endfor %}
+    {% endif %}
+    {% endblock body %}
+{% block footer_js %}
+{{ super() }}
+<script type=text/javascript>
+    $(document).ready(function() {
+        $(".autohover").hover(function() {
+            $(this).addClass('active');
+        }, function() {
+            $(this).removeClass('active');
+    });
+});
+    $(document).on("click","#addInput",function(){
+            var input = '<input class="form-control" type="text" value="new" />';
+            $("#addItem").append(input);
+});
+</script>
+
+{% endblock footer_js %}

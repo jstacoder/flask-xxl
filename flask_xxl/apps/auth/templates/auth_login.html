@@ -1,0 +1,22 @@
+{% extends 'admin.html' %}
+{% from '_bs3macros.html' import render_form %}
+{% block header %}
+{% endblock header %}
+{% block content %}
+    <div class=container>
+        <div class="row centered-form">
+            <div class=col-md-2>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Sign in</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ render_form(form=form,action='',action_text='Sign In',btn_class='btn btn-primary') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div>
+{% endblock content %}

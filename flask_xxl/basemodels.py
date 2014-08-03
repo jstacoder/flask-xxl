@@ -48,9 +48,12 @@ class BaseMixin(object):
         return commit and self.save() or self
 
     def save(self, commit=True):
-        db.session.add(self)
-        if commit:
-            db.session.commit()
+        try:
+            db.session.add(self)
+            if commit:
+                db.session.commit()
+        except:
+            return False
         return self
 
     def delete(self, commit=True):

@@ -1,0 +1,15 @@
+{% extends 'admin.html' %}
+{% from '_macros.html' import render_nav_sidebar %}
+{% block content %}
+    <div class=container>
+        <div class="row">
+            <div class="col-md-2 pull-left">
+                <h2>Content</h2>
+                {{ render_nav_sidebar('','') }}
+            </div>
+            <div class=col-md-6>
+                <h2>Content</h2>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

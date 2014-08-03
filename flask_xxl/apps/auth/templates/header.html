@@ -1,0 +1,5 @@
+{% from '_header.html' import render_frontend_nav %}
+
+    {% if nav_links and title %}
+        {{ render_frontend_nav(nav_links,title) }}
+    {% endif %}

@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% from '_bs3macros.html' import render_form %}
+{% macro render_bs3_field(type,class,placeholder,value='') %}
+    {% if kwargs.get('size','small') == 'small' %}
+            <div class="col-xs-6 col-sm-6 col-md-6">
+    {% endif %}
+    <div class="form-group">
+        <input type={{ type }} class={{ class }} {% if kwargs.get('id') %}id={{ kwargs.get('id') }} {% endif %}placeholder="{{ placeholder }}"{% if not value == '' %} value={{ value }}{% endif %}>
+    {% if kwargs.get('size','small') == 'small' %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro  render_field(field) %}
+    {{ render_bs3_field(field.type,field._class,field.text) }}
+{% endmacro %}
+
+{% block body %}
+    <div class=container>
+        <div class="row centered-form">
+        <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Sign up</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ render_form(form=form,action='',action_text='Register',btn_class='btn btn-primary') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div>
+{% endblock body %}

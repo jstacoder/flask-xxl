@@ -31,9 +31,9 @@ class BaseConfig(LocalConfig):
     #####################################################
     URL_MODULES = [
             '{{{project.url_module}}}.urls.routes',
-            #'flask.ext.xxl.admin.urls.routes',
-            #'flask.ext.xxl.auth.urls.routes',
-            #'flask.ext.xxl.page.urls.routes',
+            #'flask.ext.xxl.apps.admin.urls.routes',
+            #'flask.ext.xxl.apps.auth.urls.routes',
+            #'flask.ext.xxl.apps.page.urls.routes',
     ]
     
     #####################################################
@@ -46,10 +46,10 @@ class BaseConfig(LocalConfig):
     #####################################################
     BLUEPRINTS = [
             '{{{project.name}}}.{{{project.name}}}',
-            #'flask.ext.xxl.admin.admin',
-            #'flask.ext.xxl.menu.menu',
-            #'flask.ext.xxl.page.page',
-            #'flask.ext.xxl.auth.auth',
+            #'flask.ext.xxl.apps.admin.admin',
+            #'flask.ext.xxl.apps.menu.menu',
+            #'flask.ext.xxl.apps.page.page',
+            #'flask.ext.xxl.apps.auth.auth',
     ]
 
     ####################################################
@@ -84,9 +84,9 @@ class BaseConfig(LocalConfig):
             #'flask.ext.xxl.context_processors.add_is_page',
             #'flask.ext.xxl.context_processors.common_context',
             #'flask.ext.xxl.context_processors.common_forms',
-            #'flask.ext.xxl.menu.context_processors.frontend_nav',
-            #'flask.ext.xxl.menu.context_processors.admin_nav',
-            #'flask.ext.xxl.auth.context_processors.user_context',
+            #'flask.ext.xxl.apps.menu.context_processors.frontend_nav',
+            #'flask.ext.xxl.apps.menu.context_processors.admin_nav',
+            #'flask.ext.xxl.apps.auth.context_processors.user_context',
     ]
 
     TEMPLATE_FILTERS = [

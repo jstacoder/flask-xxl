@@ -1,0 +1,450 @@
+{% extends 'layout.html' %}
+{% from '_macros/bs3/buttons.html' import render_save_button %}
+{% block extra_head %}
+<style>
+    
+/*.form-inline .form-group { margin-right:10px; }*/
+.well-primary {
+color: rgb(255, 255, 255);
+background-color: rgb(66, 139, 202);
+border-color: rgb(153, 126, 189);
+}
+.glyphicon { margin-right:5px; }
+</style>
+{% endblock extra_head %}
+{% block body %}
+{{ render_save_button() }}
+      <!-- **************** -->
+<div class="container">
+      <!-- **************** -->
+    
+
+
+      <!-- **************** -->
+    <div class="row">
+      <!-- **************** -->
+
+
+   <!-- **************** -->
+        <div class="col-md-12">
+      <!-- **************** -->
+
+
+
+      <!-- **************** -->
+            <div class="panel-group" id="accordion">
+      <!-- **************** -->
+
+
+      <!-- **************** -->
+                <div class="panel panel-default" style="margin-top: -10px!important;">
+      <!-- **************** -->
+      <!-- **************** -->
+                    <div class="panel-heading">
+      <!-- **************** -->
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" class="accordion-toggle" href="#collapseOne">
+                                <span class="glyphicon glyphicon-file"></span>Add New Post
+                            </a>
+      <!-- **************** -->
+                        </h4>
+      <!-- **************** -->
+                    </div>
+      <!-- **************** -->
+
+
+
+                      <!-- **************** -->
+                    <div id="collapseOne" class="panel-collapse collapse in" style="margin-bottom: -10px!important;">
+      <!-- **************** -->
+                        <div class="panel-body">
+      <!-- **************** -->
+                            <form class="form" role="form">                                                
+      <!-- **************** -->
+                                <div class="row">
+      <!-- **************** -->
+                                    <div class=col-md-12>
+                          <!-- **************** -->
+
+                                        <!-- **************** -->
+                                        <input type="text" class="form-control" placeholder="Post Title" required />                                                
+                                        <!-- **************** -->
+
+
+                              <!-- **************** -->
+                                    </div>                                                        
+                                </div>
+                          <!-- **************** -->
+
+
+                          <!-- **************** -->
+                                <br />
+                                <div class=row>
+                          <!-- **************** -->
+                                    <div class=col-md-12>
+                              <!-- **************** -->
+                                        <div class="well well-md well-primary">                                         
+                              <!-- **************** -->
+                                          <div class=row>
+                                  <!-- **************** -->
+
+                                  <!-- **************** -->
+                                                <div class="col-md-2">                                        
+                                <!-- **************** -->
+
+
+
+
+                                                    
+                                        <!-- **************** -->
+                                                    <div class="form-group">
+                                                        <select class="form-control">
+                                                            <option>Draft</option>
+                                                            <option>Published</option>
+                                                        </select>
+                                                        <h6><small class=pull-left>If draft post will not be published</small></h6>
+                                                    </div>
+                                        <!-- **************** -->
+
+
+
+
+                                      <!-- **************** -->
+                                  </div>
+                                  <!-- **************** -->
+            
+
+                                          <!-- **************** -->
+                                                <div class="col-md-4">
+                                      <!-- **************** -->
+
+
+
+                                        <!-- **************** -->
+                                                    <div class=form-group>
+                                            <!-- **************** -->
+
+
+                                              <!-- **************** -->
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Publish On:</span> 
+
+                                                      <!-- **************** -->
+                                                            <input type="text" class="form-control input-group" value="" placeholder="Date" required />
+                                                  <!-- **************** -->
+                                                        </div>
+                                                  <!-- **************** -->
+                                                        <small class="pull-left">If publish is selected, the post will be public on this date</small>
+                                          <!-- **************** -->
+                                                    </div>                                                
+                                                  </div>
+                                  <!-- **************** -->
+
+                                  <!-- **************** -->
+                                                <div class="col-md-4">                  
+                                  <!-- **************** -->
+
+
+                                        <!-- **************** -->
+                                                    <div class=form-group>
+                                  <!-- **************** -->
+                                                        <div class="input-group input-group-sm">
+                                  <!-- **************** -->
+                                                            <span class="input-group-addon">Expire On:</span> 
+                                  <!-- **************** -->
+                                                            <input type="text" class="form-control input-group" value="" placeholder="Date" required /> 
+                                  <!-- **************** -->
+                                                        </div>
+                                  <!-- **************** -->
+                                                        <small class="pull-left">If set, the post will no longer be public on this date</small>
+                                  <!-- **************** -->
+                                                    </div>
+                                        <!-- **************** -->
+
+
+
+
+
+                                    {# render_close_three_divs #}
+                                      <!-- **************** -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                      <!-- **************** -->
+
+
+                            {# render_close_two_divs #}
+                            <!-- **************** -->
+                                    </div>
+                                </div>
+                                <!-- **************** -->
+
+
+
+
+                            <!-- **************** -->
+                               <div class=row>
+                                  <!-- **************** -->
+                                    <div class=col-md-12>
+                              <!-- **************** -->
+
+
+                                        
+                                        <!-- **************** -->
+                                       <textarea class="form-control" placeholder="Content" rows="5" required></textarea>
+                                        <!-- **************** -->
+
+
+                        {# render_close_two_divs #}
+                        <!-- **************** -->
+                                    </div>
+                                </div>
+                         <!-- **************** -->
+
+
+                         <!-- **************** -->
+                                <br />                                
+                                <div class=row>
+                                  <!-- **************** -->
+                                    <div class="col-md-6">
+                                  <!-- **************** -->
+                                        <div class="well well-primary">
+                          <!-- **************** -->
+
+
+                                        <!-- **************** -->
+                                            <div class="input-group">               
+                                  <!-- **************** -->
+                                                <span class="input-group-addon">www.my-flask-cms.com/</span>
+                                  <!-- **************** -->
+                                                <input type="text" class="form-control" placeholder="Page url" />           
+                                  <!-- **************** -->
+                                            </div>
+                                  <!-- **************** -->
+                                            <h5 class=pull-right style="margin-top: -1px;"><small>Will autogenerate based on slug value if nothing entered</small></h5>
+                                        <!-- **************** -->
+
+
+
+                        {# render_close_two_divs #}
+                            <!-- **************** -->
+                                        </div>
+                                    </div>
+                          <!-- **************** -->
+
+
+                                        <!-- **************** -->
+                                    <div class="form-group">
+                                  <!-- **************** -->
+                                        <div class=row>
+                                  <!-- **************** -->
+                                            <div class="col-md-3">
+                                        <!-- **************** -->
+
+
+
+                                        <!-- **************** -->
+                                                <label for="category">Category</label>
+                                                <select class="form-control" id="category">
+                                                    <option>Articles</option>
+                                                    <option>Tutorials</option>
+                                                    <option>Freebies</option>
+                                                </select>
+                                        <!-- **************** -->
+
+
+                                        <!-- **************** -->
+                                            </div>                                        
+                                        <!-- **************** -->
+
+
+
+                                        <!-- **************** -->
+                                            <div class="col-md-2">                                    
+                                  <!-- **************** -->
+                                                <label for="tags">Tags</label>
+                                                <input type="text" class="form-control pull-left" id="tags" placeholder="Tags" />
+                                  <!-- **************** -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <!-- **************** -->
+
+
+
+        {# render_close_two_divs #}
+          <!-- **************** -->
+                                </div>
+                            </div>
+          <!-- **************** -->
+          
+          {# render_close_form #}
+          <!-- **************** -->
+                      </form>
+        <!-- **************** -->
+
+
+
+
+            {# render_close_div #}
+          <!-- **************** -->
+                    </div>                            
+          <!-- **************** -->
+
+
+
+                        <!-- **************** -->
+                    <div class="panel panel-default">
+                                  <!-- **************** -->
+                        <div class="panel-heading">
+                                  <!-- **************** -->
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" class="accordion-toggle" href="#collapseTwo">
+                                    <span class="glyphicon glyphicon-th-list"></span>META DATA
+                                </a>
+                            </h4>
+                                  <!-- **************** -->
+                        </div>
+                        <!-- **************** -->
+
+
+
+
+
+                      <!-- **************** -->
+                        <div id="collapseTwo" class="panel-collapse collapse" style="margin-bottom: -5px!important;">
+                                          <!-- **************** -->
+                            <div class="panel-body">
+                                          <!-- **************** -->
+                                <div class="row">
+                                          <!-- **************** -->
+                                    <div class="col-md-12"> e
+                      <!-- **************** -->
+
+
+
+
+                                  <!-- **************** -->
+                                        <div class="form-group">
+                                          <!-- **************** -->
+
+                                          <!-- **************** -->
+                                            <div class=row>
+                                  <!-- **************** -->
+ 
+
+                                          <!-- **************** -->
+                                              <div class=col-md-6> 
+                                          <!-- **************** -->
+
+
+                                          <!-- **************** -->
+                                                    <input type="text" class="form-control" placeholder="Slug" required />
+                                          <!-- **************** -->
+
+
+                                          <!-- **************** -->
+                                                </div>
+                                         <!-- **************** -->
+                       
+
+
+                                          <!-- **************** -->
+                                                <div class=col-md-6>
+                                          <!-- **************** -->
+                                                    <input type="text" class="form-control" placeholder="Meta Title" required />
+                                          <!-- **************** -->
+                                                </div>
+                                            <!-- **************** -->
+
+
+        {# render_close_two_divs #}
+                      <!-- **************** -->
+                                            </div>
+                                        </div>
+                      <!-- **************** -->
+
+
+
+
+
+                      <!-- **************** -->
+                                        <div class="form-group">
+                                          <!-- **************** -->
+                                            <textarea class="form-control" placeholder="Description" required></textarea>
+                                          <!-- **************** -->
+                                        </div>
+                    <!-- **************** -->
+
+
+
+                                        
+                    
+        {# render_close_three_divs #}
+                    <!-- **************** -->
+                                    </div>
+                                </div>
+                            </div>
+                      <!-- **************** -->
+
+
+
+                      <!-- **************** -->
+                            <div class="panel-footer">
+                                          <!-- **************** -->
+                                <div class=row>
+                                          <!-- **************** -->
+                                    <div class=col-md-6>
+                                          <!-- **************** -->
+                                    </div>
+                                          <!-- **************** -->
+                                    <div class="col-md-3 pull-right" style="/*margin-top:-35px; margin-bottom:-10px;*/">       
+                                          <!-- **************** -->
+                                       <button type="submit" class="btn btn-primary btn-sm ">
+                                          <!-- **************** -->
+                                           <span class="glyphicon glyphicon-floppy-disk pull-left"></span>Save 
+                                          <!-- **************** -->
+                                        </button>
+                                          <!-- **************** -->
+                                        <button type="button" class="btn btn-default btn-sm pull-right">
+                                          <!-- **************** -->
+                                            <span class="glyphicon glyphicon-eye-open"></span>Preview
+                                          <!-- **************** -->
+                                       </button>                                            
+                     <!-- **************** -->
+
+
+
+        {# render_close_three_divs #}
+                      <!-- **************** -->
+                                    </div>
+                                </div> 
+                            </div>
+                      <!-- **************** -->
+
+
+        {# render_close_two_divs #}
+                   <!-- **************** -->
+                        </div>
+                    </div>
+                    <!-- **************** -->
+
+
+        {# render_close_three_divs #}
+      <!-- **************** -->
+                </div>                        
+            </div>
+        </div>
+    <!-- **************** -->
+
+
+
+        {# render_close_two_divs #}
+      <!-- **************** -->
+    </div>
+</div>
+    <!-- **************** -->
+
+
+
+{% endblock body %}

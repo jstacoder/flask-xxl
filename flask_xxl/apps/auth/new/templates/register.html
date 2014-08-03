@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Welcome to Flask Basic Registration</h1>
+  <h3>Please register.</h3>
+    <br/>
+    <form method="POST" action="">
+      <p>Username: {{ form.name }}&nbsp;&nbsp;Email: {{ form.email }}</p>
+      <p>Password: {{ form.password }}&nbsp;&nbsp;Verify Password: {{ form.confirm }}</p>
+      <p><input class="btn btn-primary" type="submit" value="Register"></p>
+    </form>
+    <br/>
+    <p><em>Already registered?</em> Click <a href="/">here</a> to login.</p>
+{% endblock %}

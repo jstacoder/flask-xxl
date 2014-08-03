@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            {% if admin is defined %}
+            body { padding-top:75px;}
+            {% endif %}
+        </style>
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css" />
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap-theme.css" />
+        {#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}" />#}
+        {% if title is defined %}
+            <title>{{ title }}</title>
+        {% endif %}
+        <script type="text/javascript">
+            var $SCRIPT_ROOT = {{ request.url_root|tojson|safe }};
+            var SCRIPT_ROOT = {{ request.url_root|tojson|safe }};
+        </script>
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    <body style="{% if body_style %}{% block body_style %}{{ body_style }}{% endblock body_style %}{% else %}padding-top:75px;{% endif %}">
+        {% if not admin %}
+            <div class=container>
+        {% endif %}
+        {% block header %}
+            {% include 'admin/_header.html' with context %}
+        {% endblock header %}
+        {% if admin %}
+            <div class=container>
+        {% endif %}
+        {% block messages %}
+            {% include 'includes/_messages.html' with context %}
+        {% endblock messages %}
+        {% block body %}{% endblock body %}
+        {% block content %}{% endblock content %}
+                <footer>
+                    {% block footer %}{% endblock footer %}
+                </footer>
+            </div>
+        {% block footer_js %}
+            <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+            <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js">
+            </script>
+        {% if form %}
+            {% set ck = false %}
+            {% for f in form %}
+                {% if f.type == 'FormField' %}
+                    {% for field in f %}
+                        {% if field.type == 'CKTextEditorField' %}
+                            {% set ck = true %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% if codemirror %}
+            {#{{ codemirror.include_codemirror() }}#}
+        {% endif %}
+                <script src="{{url_for('static',filename='js/ckeditor/ckeditor.js')}}"></script>
+                <script type="text/javascript">
+                    CKEDITOR.replace( 'ckeditor', {extraPlugins: 'codemirror',startupMode : 'source'});
+                </script>
+        {% endif %}
+        {% endblock footer_js %}
+    </body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block header %}
+    {% include 'header.html' with context %}
+{% endblock header %}
+    {% block body %}
+    <div class=container>
+        <div class=page-header>
+            <h2>Page Title</h2>
+            {# header goes  here #}
+        </div>
+        <div class=row>
+            <div class=col-md-12>
+                <p>{{ lipsum() }}</p>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

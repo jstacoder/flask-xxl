@@ -1,0 +1,291 @@
+{% extends 'admin.html' %}
+{% block extra_head %}
+    {% if codemirror %}
+        {{ codemirror.include_codemirror() }}
+    {% endif %}
+<style>
+/*.form-inline .form-group { margin-right:10px; }*/
+.well-primary {
+color: rgb(255, 255, 255);
+background-color: rgb(66, 139, 202);
+border-color: rgb(153, 126, 189);
+}
+.CodeMirror {height:175px!important;border:1px inset rgb(153, 126, 189);background-color:rgb(66, 139, 202);border-radius: 6px;font-size: 16px;}
+.glyphicon { margin-right:5px; }
+</style>
+{% endblock extra_head %}
+{% block body %}
+<div class=text style="display:none">
+    {{ lipsum() }}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" style="margin-top: -12px!important;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" class="accordion-toggle" href="#collapseOne">
+                                <span class="glyphicon glyphicon-file"></span>Add New Page
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in" style="margin-bottom: -15px!important;">
+                        <div class="panel-body">
+                            <form class="form" role="form">
+                                <div class="row">
+                                    <div class=col-md-12>
+                                        {% if form.title and form.name %}
+                                            <div class=form-inline>
+                                            {{ form.title(class_="form-control",placeholder="Page Title",required=true,style="width:49%;") }}
+                                            {{ form.name(class_="form-control",placeholder="Page Name",required=true,style="width:50%;") }}
+                                        </div>
+                                        {% else %}
+                                            <input type="text" class="form-control" placeholder="Post Title" required />
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <br />
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class="well well-md well-primary">
+                                            <div class=row>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        {% if form.visible %}
+                                                            {{ form.visible(class_="form-control") }}
+                                                        {% else %}
+                                                        <select class="form-control">
+                                                            <option>Draft</option>
+                                                            <option>Published</option>
+                                                        </select>
+                                                        {% endif %}
+                                                        <h6><small class=pull-left>If you select draft your page will not be published</small></h6>
+                                                    </div><!-- end form-group -->
+                                                </div><!-- end col -->
+                                            <div class="col-md-4">
+                                                <div class=form-group>
+                                                    <div class="input-group input-group-sm">
+                                                        {% if form.date_added %}
+                                                            <span class="input-group-addon">{{ form.date_added.label.text }}</span>
+                                                            {{ form.date_added(class_="form-control input-group", value="", placeholder="Enter Date",required=true) }}
+                                                {% else %}
+                                                        <span class="input-group-addon">Publish On: </span>
+                                                        <input type="text" class="form-control input-group" value="" placeholder="Date" required />
+                                                {% endif %}
+                                                </div>
+                                                <h6>
+                                                    <small class="pull-left">If publish is selected, the page will be public on this date</small>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class=form-group>
+                                                    <div class="input-group input-group-sm">
+                                                        {% if form.date_end %}
+                                                            <span class="input-group-addon">{{ form.date_end.label.text }}</span>
+                                                            {{ form.date_end(class_="form-control input-group",value="",placeholder="Enter Date") }}
+                                                        {% else %}
+                                                            <span class="input-group-addon">Expire On:</span>
+                                                            <input type="text" class="form-control input-group" value="" placeholder="Date" />
+                                                        {% endif %}
+                                                    </div><h6>
+                                                    <small class="pull-left">If set, the page will no longer be public on this date</small>
+                                                    </h6>
+                                                </div>
+                                            </div><!-- end row -->
+                                        </div>
+                                    </div><!-- end well -->
+                                </div>
+                            </div><!-- end col -->
+                            <div class=row>
+                                <div class=col-md-12>
+                                    <div class=content>
+                                    {% if form.content %}
+                                        {{ form.content(class_="form-control",placeholder="content",rows="5" ,required=true,style="height:250px;border:2px inset black;") }}
+                                    {% else %}
+                                        <textarea class="form-control" placeholder="Content" rows="3" required></textarea>
+                                    {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class=row>
+                                <div class="col-md-6">
+                                    <div class="well well-primary">
+                                        <div class="input-group">
+                                            {% if form.short_url %}
+                                                <span class="input-group-addon">{{request.url_root}}</span>
+                                                {{ form.short_url(class_="form-control",placeholder="Page Url") }}
+                                            {% else %}
+                                                <span class="input-group-addon">www.my-flask-cms.com/</span>
+                                                <input type="text" class="form-control" placeholder="Page url" />
+                                            {% endif %}
+                                         </div>
+                                         <h5 class=pull-right style="margin-top: -1px;"><small>Will autogenerate based on slug value if nothing entered</small></h5>
+                                    </div>
+                                    <div class="row">
+                                        <div class=col-md-4>
+                                            <div class="checkbox"><label class="checkbox-inline">
+                                                {% if form.add_to_navbar %}
+                                                    {{ form.add_to_navbar() }} {{form.add_to_navbar.label.text}}
+                                                {% else %}
+                                                    <input type="checkbox">Add To Navbar
+                                                {% endif %}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class=col-md-4>
+                                            <div class="checkbox"><label class="checkbox-inline">
+                                                {% if form.add_sidebar %}
+                                                    {{ form.add_sidebar() }} {{form.add_sidebar.label.text }}
+                                                {% else %}
+                                                    <input type="checkbox">Add Sidebar
+                                                {% endif %}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class=row>
+                                            <div class="col-md-3">
+                                                {% if form.category %}
+                                                    {{ form.category.label }}
+                                                    {{ form.category(class_="form-control", id="category") }}
+                                                {% else %}
+                                                <label for="category">Category</label>
+                                                <select class="form-control" id="category">
+                                                    <option>Articles</option>
+                                                    <option>Tutorials</option>
+                                                    <option>Freebies</option>
+                                                </select>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-2">
+                                                {% if form.tags %}
+                                                    {{ form.tags.label }}
+                                                    {{ form.tags(class_="form-control pull-left", placeholder="Tags") }}
+                                                {% else %}
+                                                <label for="tags">Tags</label>
+                                                <input type="text" class="form-control pull-left" id="tags" placeholder="Tags" />
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" class="accordion-toggle" href="#collapseTwo">
+                                <span class="glyphicon glyphicon-th-list"></span>META DATA
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse" style="margin-bottom: -5px!important;">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class=row>
+                                            <div class=col-md-6>
+                                                {% if form.slug %}
+                                                    {{ form.slug(class_="form-control",placeholder="slug", required=false) }}
+                                                {% else %}
+                                                    <input type="text" class="form-control" placeholder="Slug" required />
+                                                {% endif %}
+                                            </div>
+                                            <div class=col-md-6>
+                                                {% if form.meta_title %}
+                                                    {{ form.meta_title(class_="form-control",placeholder="Meta Title") }}
+                                                {% else %}                                                 
+                                                    <input type="text" class="form-control" placeholder="Meta Title" required />
+                                                {% endif %}
+                                             </div>
+                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {% if form.description %}
+                                            {{ form.description(class_="form-control",placeholder="Description") }}
+                                        {% else %}
+                                            <textarea class="form-control" placeholder="Description" required></textarea>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class=row>
+                                <div class=col-md-8>
+                                    {{ form.submit(class_='btn btn-primary') }}
+                                </div>
+                                    <div class="col-md-4">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="submit" class="btn btn-primary btn-sm save-btn">
+                                                <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
+                                            </button>
+                                            <button type="button" class="btn btn-default btn-sm ">
+                                                <span class="glyphicon glyphicon-eye-open"></span>&nbsp;Preview
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-sm">
+                                                <span class="glyphicon glyphicon-repeat"></span>&nbsp;Save and add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div> <!-- end row -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+    {% block footer_js %}
+        {{ super() }}
+        <script type="text/javascript">
+        $(document).on("click",".save-btn",function(){
+            $.getJSON(SCRIPT_ROOT+'page/add_page',{
+                date_added:$('input[name="date_added"]').val(),
+                date_end:$('input[name="date_end"]').val(),
+                name:$('input[name="name"]').val(),
+                description:$('input[name="description"]').val(),
+                slug:$('input[name="slug"]').val(),
+                short_url:$('input[name="short_url"]').val(),
+                title:$('input[name="title"]').val(),
+                add_to_nav:$('input[name="add_to_nav"]').val(),
+                add_sidebar: $('input[name="add_sidebar"]').val(),
+                visible:$('input[name="visible"]').val(),
+                meta_title:$('input[name="meta_title"]').val(),
+                content:$($(".CodeMirror-code").children().children()[1]).text(),
+                template:$('input[name="template"]').val(),
+                category:$('input[name="category"]').val(),
+                tags:$('input[name="tags"]').val(),
+                use_base_template:$('input[name="use_base_template"]').val()
+            },function(data){
+                    var successMsg = 'Page created';
+                    var failMsg = 'Page creation Failed';
+                if(data.result == 1){
+                    var newContainer = $("<div>").addClass("container")
+                                             .append($("<div>").addClass("row")
+                                             .append($("<div>").addClass("col-md-4")
+                                        ));
+
+
+                    var result_html = $('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'+successMsg+'</div>');
+                }else{
+                    var result_html = $('<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'+failMsg+'</div>');
+                }
+                $(".panel-group").hide(2000);
+                $(newContainer).appendTo('body');
+                $(result_html).appendTo($('.col-md-4'));
+                $(data.content).appendTo($('.col-md-4'));
+                });
+            });
+        </script>
+    {% endblock footer_js %}
+        

@@ -1,0 +1,11 @@
+{% extends 'admin.html' %}
+    {% block content %}
+        {% if obj %}
+            {{obj.name}}
+            {% if lines %}
+                {% for line in lines %}
+                    <br />{{line}}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endblock %}
