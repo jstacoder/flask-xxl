@@ -1,21 +1,19 @@
-from flask.ext.script import Manager,prompt
-from flask.ext.script.commands import Clean,ShowUrls
-from flask_xxl import flaskxxl
-import os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-
+"""
+    manage
+    ~~~~~~
+"""
+import subprocess
+from flask.ext.script import Shell, Manager, prompt_bool
+from flask.ext.script.commands import Clean
+from flask.ext.xxl import flaskxxl
 manager = Manager(flaskxxl)
+from flask.ext.xxl.mr_bob import manager as mrbob_manager
 
 
-
-@manager.command
-def mk_dir():
-    dirname = prompt('What dir to make',None)
-    if dirname is not None and dirname != ' ':
-        if not os.path.exists(dirname):
-            os.mkdir(dirname)
-
-if __name__ == "__main__":
-    manager.add_command('show_urls',ShowUrls())
+if __name__ == '__main__':
+    manager.add_command('mrbob',mrbob_manager)
     manager.add_command('clean',Clean())
     manager.run()
