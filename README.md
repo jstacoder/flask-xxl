@@ -248,5 +248,66 @@ decorator style:
     def view_func():
         return a_view()
 
+and this leads us to our next setting 
 
+###ROUTE_MODULES
+
+++++++++++++++++
+
+now flask and its many tutorials teach the decorator style from above, arguing that it makes debugging
+a crashed site eaiser because the function that crashed the site is defined right next to the url that called it.
+Which makes sense, until your project grows to 500+ lines, then those functions start getting harder to sift through. Not to mention that the decorator syntax makes it easy to assign different request methods to the same functions, then checking in the function which  type of request was sent and basing the response on that. This to me seems like a lot for nothing. The great thing about it though is it uses simple string matching to line up incoming requests with the defined url rules, this isnt as powerful as some systems, but it is simple to understand and you can get up and running in a short matter of time.
+
+Django on the other hand uses the config style, not exactly like my example above, but close enough. In the Django world each app you add to your project you give a urls.py file that imports your view functions/classes and matchs them to url rules. I find this makes debugging actually eaiser. Anytime your site crashes, the url will tell you which urls.py file to look in, then just find that line and theres your offending function. The main downside with Django is the it uses a complex system of _"regular expressions"_ to parse and match the incoming url requests to the defined url rules. I must admit that no matter how trivial they may sound, regular expressions are anything but.
+
+So for my system i took the best of both of those worlds. 
+*  a _urls.py_ file
+   *     each app (blueprint in flask speak) gets its own urls.py for routing
+
+* string comparisons for matching requests to url rules 
+
+
+Here is a _"small"_ example to show you how a view and its routing are defined:
+(dont mind the flask-xxl imports, ill explain them later)
+
+views.py
+```python 
+from flask.ext.xxl.core.baseviews import BaseView
+
+class ExampleView(BaseView):
+   _template = 'example.html'
+   
+   def get(self):
+       return self.render()
+```
+
+now we need a blueprint to plug it into
+example.py
+```python
+from flask import Blueprint
+
+example = Blueprint('example',__file__)
+from .views import *
+```
+
+then we need to define our route
+urls.py
+```python 
+from .views import ExampleView
+from example import eaxmple
+
+routes = [
+   ((example),
+   ('/',ExampleView.as_view('example')),
+)]
+```
+
+then just define the url module in the <code>ROUTE_MODULE</code> setting
+settings.py
+```python
+
+ROUTE_MODULES = (
+   'myapp.example.urls',
+)
+```
 
