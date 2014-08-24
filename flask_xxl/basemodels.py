@@ -4,8 +4,11 @@
     basemodels.py
     ~~~~~~~~~~~
 """
-from sqlalchemy.ext.declarative import declared_attr
 from flask import current_app
+from sqlalchemy.ext.declarative import as_declarative
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declared_attr
+from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty
 
 class SQLAlchemyMissingException(Exception):
     pass
@@ -15,6 +18,11 @@ try:
 except AttributeError, e:
     raise SQLAlchemyMissingException('Need sqlalchemy installed to use basemodel')
 
+
+class ModelDeclarativeMeta(_BoundDeclarativeMeta):
+    pass
+
+@as_declarative(name='Model',metaclass=ModelDeclarativeMeta)
 class BaseMixin(object):
     __table_args__ = {'extend_existing': True}
 
@@ -40,9 +48,12 @@ class BaseMixin(object):
         return commit and self.save() or self
 
     def save(self, commit=True):
-        db.session.add(self)
-        if commit:
-            db.session.commit()
+        try:
+            db.session.add(self)
+            if commit:
+                db.session.commit()
+        except:
+            return False
         return self
 
     def delete(self, commit=True):
@@ -62,7 +73,7 @@ class BaseMixin(object):
         if not 'id' in exclude:
             exclude.append('id')
         rtn = []
-        for col in cls.__table__.c._all_columns:
+        for col in cls.__table__.c._all_cols:
             if not col.name in exclude:
                 rtn.append((col.name,_clean_name(col.name)))
         for attr in dir(cls):

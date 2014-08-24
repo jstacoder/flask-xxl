@@ -1,0 +1,68 @@
+    {% extends 'admin.html' %}
+{% from '_macros.html' import render_panel_form with context %}
+    {% block extra_head %}
+            {% if codemirror %}
+                {#{{ codemirror.include_codemirror() }}#}
+            {% endif %}
+            {% if pagedown %}
+                {{ pagedown.include_pagedown() }}
+            {% endif %}
+            {#<script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+            <script type="text/javascript">
+                tinymce.init({
+                    selector: "textarea"
+                    });
+            </script>#}
+        <style>
+            .flask-pagedown-input {
+            }
+            .flask-pagedown-preview {
+                    border: 1px dotted black;
+                    background-color: #f0f0f0;
+                    }
+        </style>
+    {% endblock extra_head %}
+    {% block body %}
+        {% if obj %}
+            {% if obj.content %}
+                <div id="text" style="display:none;">
+                    {{ obj.content }}
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if form %}
+        <div class=well>
+            {% if form_args %}
+                {{ render_panel_form(form,**form_args) }}
+            {% else %}
+                {{ render_panel_form(form) }}
+            {% endif %}
+            {% for f in form %} 
+                {% if f.type == 'FormField' %}
+                    {% for t in f %}
+                        {{ t.type }}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+
+        </div>
+        {% endif %}
+        {% endblock %}
+        {% block footer_js %}
+        {{ super() }}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                if($("#text").length > 1)
+                    var t = $("#text").text();
+                    if ($(codemirror_cke_1).length > 0) {
+                        codemirror_cke_1.setValue(t);
+                    }
+            CKEDITOR.instances.body_body.insertHtml(t);
+        /*        var editor_for_body_body = CodeMirror.fromTextArea(
+                    document.getElementById("body-body"),
+                    {value:t,lineNumbers:true,mode:"htmlmixed",language:"python"}
+                    );
+                    editor_for_body_body.setValue(t);*/
+                });
+        </script>
+        {% endblock footer_js %}

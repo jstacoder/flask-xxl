@@ -1,0 +1,52 @@
+{# Macros for using Bootstrap3 buttons #}
+{# file contain: #}
+{# render_icon, render_button, render_save_button, render_edit_button, render_view_button, render_del_button #}
+
+{# PRIVATE #}
+{% macro _create_button_class(color,size,link=false) %}
+    {% if color == 'yellow' %}
+        {% set color = 'warning' %}
+    {% elif color == 'green' %}
+        {% set color = 'success' %}
+    {% elif color == 'red' %}
+        {% set color = 'danger' %}
+    {% elif color == 'grey' %}
+        {% set color = 'default' %}
+    {% else %}
+        {% set color = 'primary' %}
+    {% endif %}
+    {% if not size == '' %}
+        {% set size = 'btn-%s' % size %}
+    {% endif %}
+    {% set color = 'btn-%s' % color %}
+    {% set _class = 'btn %s %s' % (size,color) %}
+    {{ _class }}
+{% endmacro %}
+
+{% macro render_icon(name,lib='glyph') %}
+    <span class="{% if lib == 'glyph' %}glyphicon glyphicon-{% else %}fa-{% endif %}{{ name }}"></span>
+{% endmacro %}
+
+{% macro render_button(type,class,text,icon) %}
+    <button type={{ type }} class="{{ class }}">{% if icon %}{{ render_icon(icon) }}{% endif %}{{ text }}</button>
+{% endmacro %}
+
+{% macro render_save_button(size='',color='blue') %}
+    {% set _class = '%s' % _create_button_class(color,size) %}
+    {{ render_button('submit',_class,'Save','floppy-disc') }}
+{% endmacro %}
+
+{% macro render_edit_button(size='',color='blue') %}
+    {% set _class = '%s' % _create_button_class(color,size) %}
+    {{ render_button('submit',_class,'Edit','pencil') }}
+{% endmacro %}
+
+{% macro render_view_button(size='',color='blue') %}
+    {% set _class = '%s' % _create_button_class(color,size) %}
+    {{ render_button('submit',_class,'View','eye-open') }}
+{% endmacro %}
+
+{% macro render_del_button(size='',color='blue') %}
+    {% set _class = '%s' % _create_button_class(color,size) %}
+    {{ render_button('submit',_class,'Delete','trash') }}
+{% endmacro %}

@@ -1,0 +1,13 @@
+{% from "macros/form_helpers.html" import common_form_field %}
+
+    <form action="{{ url_for('auth.login') }}" method="POST" class="form">
+        {{ form.hidden_tag() }}
+        {{ common_form_field(form.email, class_='form-control') }}
+        {{ common_form_field(form.password, class_='form-control') }}
+        <div class="form-group">
+            <label class="label">&nbsp;</label>
+            <button type="submit" class="btn btn-primary" value="Log in">
+                Login
+            </button>
+        </div>
+    </form>

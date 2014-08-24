@@ -41,6 +41,24 @@ class BaseView(MethodView):
     def flash(self,*args,**kwargs):
         flash(*args,**kwargs)
 
+    def form_validated(self):
+        if self._form:
+            return self._form().validate()
+        return False
+
+    def get_form_data(self):
+        result = {}
+        for field in self._form():
+            name = field.name
+            if '_' in field.name:
+                if not field.name.startswith('_'):
+                    if not field.name.endswith('_'):
+                        if field.name.split('_')[0] == field.name.split('_')[1]:
+                            name = field.name.split('_')[0]
+            result[name] = field.data
+        return result
+
+
 class ModelView(BaseView):
     _model = None
 

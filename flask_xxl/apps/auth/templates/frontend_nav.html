@@ -1,0 +1,15 @@
+
+{% macro frontend_nav_link(endpoint,label) %}
+    <li{% if endpoint in request.url %} class=active{% endif %}><a href="{{ url_for(endpoint,**kwargs) }}">{{ label }}</a></li>
+{% endmacro %}
+
+{% macro render_frontend_nav(link_list,title) %}
+    <div class=header>
+        <ul class="nav nav-pills pull-right">
+            {% for e,l in link_list %}
+                {{ frontend_nav_link(e,l) }}
+            {% endfor %}
+        </ul>
+        <h3 class=text-muted>{{ title|title }}</h3>
+    </div>
+{% endmacro %}

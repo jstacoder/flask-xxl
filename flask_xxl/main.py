@@ -38,6 +38,7 @@ class AppFactory(object):
         self.app.config.from_object(self.app_config)
         self.app.config.from_envvar(self.app_envvar, silent=True)
 
+
         self._set_path()
         self._bind_extensions()
         self._register_blueprints()
@@ -48,7 +49,7 @@ class AppFactory(object):
         return self.app
 
     def _set_path(self):
-        sys.path.append(self.config.get('ROOT_PATH',''))
+        sys.path.append(self.app.config.get('ROOT_PATH',''))
 
     def _get_imported_stuff_by_path(self, path):
         module_name, object_name = path.rsplit('.', 1)
@@ -124,7 +125,6 @@ class AppFactory(object):
         for route in routes:
             blueprint,rules = route[0],route[1:]
             for pattern, view in rules:
-                #print 'setting {} {} {}'.format(pattern,view,blueprint[0])
                 if type(blueprint) == type(tuple()):
                     blueprint = blueprint[0]
                 blueprint.add_url_rule(pattern,view_func=view)

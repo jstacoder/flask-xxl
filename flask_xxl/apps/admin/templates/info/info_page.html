@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+    <article class="page l-75-c">
+        <header class="page__header">
+            <h1 class="page__title">I need more info!</h1>
+        </header>
+        <div class="page__content">
+            <p>
+                As I've already said, you can find more info about Flask Kit on
+                <a href="https://github.com/semirook/flask-kit">GitHub</a>.
+                There is nothing to learn, just follow the proposed project structure.
+            </p>
+            <p>
+                This Kit uses some popular extensions, like 
+                <a href="http://packages.python.org/Flask-SQLAlchemy/">Flask-DebugToolbar</a> and
+                <a href="http://flask-debugtoolbar.readthedocs.org/en/latest/">Flask-SQLAlchemy</a>.
+                Feel free to install more, but don't forget to define them in <code>ext.py</code> and to register them
+                in <code>settings.py</code>. You can find examples in the code.
+            </p>
+        </div>
+    </article>
+{% endblock %}

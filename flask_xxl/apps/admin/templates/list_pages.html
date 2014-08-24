@@ -1,0 +1,29 @@
+{% macro render_page_list_item(item) %}
+    <li><a class="list-group-item" href="{{ item.link }}">{{item.text}}</a></li>
+{% endmacro %}
+
+{% macro start_page_list() %}
+    <div class=list-group>
+        <ul class=list-group>
+{% endmacro %}
+
+{% macro end_page_list() %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro render_page_list(page_list) %}
+    {{ start_page_list() }}
+    {% for itm in page_list %}
+        {{ render_page_list_item(itm) }}
+    {% endfor %}
+    {{ end_page_list() }}
+{% endmacro %}
+{% extends 'layout.html' %}
+    {% block content %}
+    {% if page_list %}
+        {{ render_page_list(page_list) }}
+    {% endif %}
+    {% endblock content %}
+
+
