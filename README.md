@@ -281,7 +281,8 @@ class ExampleView(BaseView):
        return self.render()
 ```
 
-now we need a blueprint to plug it into
+now we need a blueprint to plug it into 
+
 example.py
 ```python
 from flask import Blueprint
@@ -290,7 +291,8 @@ example = Blueprint('example',__file__)
 from .views import *
 ```
 
-then we need to define our route
+then we need to define our route 
+
 urls.py
 ```python 
 from .views import ExampleView
@@ -302,7 +304,8 @@ routes = [
 )]
 ```
 
-then just define the url module in the <code>ROUTE_MODULE</code> setting
+then just define the url module in the <code>ROUTE_MODULE</code> setting 
+
 settings.py
 ```python
 
