@@ -92,7 +92,8 @@ here thats <code>settings.py</code> a file that is very similar now to djangos <
                                                         
 ======================                            
                                                             
-the main settings here are              
+the main settings here are     
+
                                 #Django Equivilants
                                 #++++++++++++++++++++
     INSTALLED_BLUEPRINTS = [    #<-- INSTALLED_APPS
@@ -234,12 +235,12 @@ or a decoraotor syntax ie:
 
 config style:
 
-
-    routes = (
-        ((Bp),
-        ('/',AView.as_view('view')),
-    )
-
+```python
+routes = (
+  ((Bp),
+  ('/',AView.as_view('view')),
+ )
+```
 
 decorator style:
 
