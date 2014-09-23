@@ -36,9 +36,14 @@ class BaseView(MethodView):
         return render_template(self._template,**self._context)
 
     def redirect(self,endpoint,**kwargs):
-        return redirect(url_for(endpoint,**kwargs))
+        if not kwargs.pop('raw',False):
+            return redirect(url_for(endpoint,**kwargs))
+        return redirect(endpoint,**kwargs)
+        
 
     def flash(self,*args,**kwargs):
+        if not 'category' in kwargs:
+            kwargs['category'] = 'warning'
         flash(*args,**kwargs)
 
     def form_validated(self):
@@ -57,6 +62,10 @@ class BaseView(MethodView):
                             name = field.name.split('_')[0]
             result[name] = field.data
         return result
+    
+    def get_env(self):
+        from flask import current_app
+        return current_app.create_jinja_environment()
 
 
 class ModelView(BaseView):

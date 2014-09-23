@@ -110,17 +110,13 @@ class BaseConfig(LocalConfig):
         ('test6','opt6'),
     ),
     'SUBMIT_TEXT':'Send to Us',
-    'COMPANY_TITLE':'Level2designs',
     'COMPANY_ADDRESS':{
         'NAME':'level2designs',
         'STREET':'1045 w katella',
         'CITY':'Orange',
         'STATE':'CA',
         'ZIP':'92804',
-    },
-    'COMPANY_PHONE':'714-783-6369',
-    'CONTACT_NAME':'Kyle Roux',
-    'CONTACT_EMAIL':'kyle@level2designs.com',
+        },
     }
 
     #BLOG_SIDEBAR_LEFT = False

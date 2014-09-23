@@ -59,6 +59,22 @@ def start_project(testing=False):
     non_interactive = False
     args = [template_dir,'-O',target_dir,'-v','-w']
     cli.main(args)
+
+@manager.option("-t","--testing",action="store_true")
+def add_blueprint(testing=False):
+    template_dir = os.path.join(MRBOB_TEMPLATE_DIR,'blueprint')
+    if testing:
+        target_dir = './testing'
+    else:
+        target_dir = os.curdir
+    if target_dir == os.curdir:
+        if not prompt_bool('not testing, are you sure you want to continue...'):
+            sys.exit(0)
+    list_questions = False
+    non_interactive = False
+    args = [template_dir,'-O',target_dir,'-v','-w']
+    cli.main(args)
+
    
 
 

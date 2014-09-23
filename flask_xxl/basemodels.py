@@ -8,7 +8,7 @@ from flask import current_app
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
-from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty
+from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty, sessionmaker
 
 class SQLAlchemyMissingException(Exception):
     pass
@@ -36,6 +36,10 @@ class BaseMixin(object):
         ):
             return cls.query.get(int(id))
         return None
+    
+    @property
+    def session(self):
+        raise NotImplementedError
 
     @classmethod
     def create(cls, **kwargs):
@@ -49,16 +53,16 @@ class BaseMixin(object):
 
     def save(self, commit=True):
         try:
-            db.session.add(self)
+            self.session.add(self)
             if commit:
-                db.session.commit()
+                self.session.commit()
         except:
             return False
         return self
 
     def delete(self, commit=True):
-        db.session.delete(self)
-        return commit and db.session.commit()
+        self.session.delete(self)
+        return commit and self.session.commit()
 
     @property
     def absolute_url(self):
@@ -74,16 +78,17 @@ class BaseMixin(object):
             exclude.append('id')
         rtn = []
         for col in cls.__table__.c._all_cols:
-            if not col.name in exclude:
+            if not col.name in exclude and not col.name.endswith('id'):
                 rtn.append((col.name,_clean_name(col.name)))
         for attr in dir(cls):
             if not attr in exclude:
                 if not attr in [x[0] for x in rtn]:
-                    if not attr.startswith('_'):
-                       if not callable(getattr(cls,attr)):
+                    if not attr.startswith('_') and not attr.endswith('id'):
+                        if not callable(getattr(cls,attr)):  
                             rtn.append((attr,_clean_name(attr)))
         return rtn
 
+    
     
 def _clean_name(name):
     names = name.split('_')

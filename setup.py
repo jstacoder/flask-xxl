@@ -17,7 +17,10 @@ config = dict(
         author='Kyle Roux',
         author_email='kyle@level2designs.com',
         description='quick way to design large flask projects',
-        long_description=get_description()
+        long_description=get_description(),
+        entry_points=dict(
+            console_scripts='flaskxxl-manage.py=flask_xxl.cli:main'
+            )
 )
 
 setup(**config)

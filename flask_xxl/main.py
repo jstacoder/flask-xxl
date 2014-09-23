@@ -5,7 +5,7 @@
     ~~~~~~~~
     :license: BSD, see LICENSE for more details.
 """
-
+import jinja2_highlight
 import sys
 import os
 from flask import Flask
@@ -45,6 +45,7 @@ class AppFactory(object):
         self._register_routes()
         self._register_context_processors()
         self._register_template_filters()
+        self._register_template_extensions()
 
         return self.app
 
@@ -56,6 +57,11 @@ class AppFactory(object):
         module = import_string(module_name)
 
         return module, object_name
+
+    def _register_template_extensions(self):
+        self.app.jinja_options = dict(Flask.jinja_options)
+        self.app.jinja_options.setdefault('extensions',[])\
+                                .append('jinja2_highlight.HighlightExtension')
 
     def _bind_extensions(self):
         if self.app.config.get('VERBOSE',False):

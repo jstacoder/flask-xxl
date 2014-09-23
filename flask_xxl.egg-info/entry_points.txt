@@ -1,0 +1,3 @@
+[console_scripts]
+flaskxxl-manage.py=flask_xxl.cli:main
+
