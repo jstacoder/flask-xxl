@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-
+{{% macro add_blueprint(name) %}}
+    '{{{ name }}}.{{{ name }}}',
+{{% endmacro %}}
+{{% macro render_dburi(driver,host,user,pw,db,port='3306') %}}
+    SQLALCHEMY_DATABASE_URI = '{{{ driver }}}://{{{ user }}}:{{{ pw }}}@{{{ host }}}:{{{ port }}}/{{{ db }}}'
+{{% endmacro %}}
 """
     settings
     ~~~~~~~~
@@ -30,7 +35,7 @@ class BaseConfig(LocalConfig):
     #
     #####################################################
     URL_MODULES = [
-            '{{{project.url_module}}}.urls.routes',
+            '{{{project.name}}}.urls.routes',
             #'flask.ext.xxl.apps.admin.urls.routes',
             #'flask.ext.xxl.apps.auth.urls.routes',
             #'flask.ext.xxl.apps.page.urls.routes',
@@ -62,10 +67,15 @@ class BaseConfig(LocalConfig):
 
     EXTENSIONS = [
             'ext.db',
+            {{% if project.add_migration -%}}
+            'ext.alembic',
+            {{% else %}}
+            #'ext.alembic',
+            {{%- endif %}}
             #'ext.toolbar',
             #'ext.pagedown',
             #'ext.codemirror',
-            #'ext.alembic',
+
     ]
     
     ###################################################

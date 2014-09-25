@@ -9,8 +9,9 @@ import subprocess
 from flask.ext.script import Shell, Manager, prompt_bool
 from flask.ext.script.commands import ShowUrls,Clean
 from flask.ext.xxl.mr_bob import manager as mrbob_manager
+from flask.ext.alembic.cli.script import manager as alembic_manager
 from app import app
-from ext import db
+from ext import db,alembic
 
 manager = Manager(app)
 
@@ -36,4 +37,5 @@ if __name__ == '__main__':
     manager.add_command('clean',Clean())
     manager.add_command('urls',ShowUrls())
     manager.add_command('mrbob',mrbob_manager)
+    manager.add_command('db',alembic_manager)
     manager.run()

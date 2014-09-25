@@ -2,8 +2,14 @@ from manage import manager
 from mrbob import cli
 import sys
 import os
-from flask import current_app
 from flask_xxl import flaskxxl
+
+
+
+def get_template_dir():
+    EXT_ROOT = os.path.abspath(os.path.dirname(__file__))
+    return os.path.join(EXT_ROOT,'templates')
+
 
 def print_usage():
     print 'flaskxxl-manage.py [start-project] [start-blueprint]'
@@ -24,7 +30,7 @@ def run_mrbob(template_dir,testing):
 
 @manager.command
 def start_blueprint(testing=False):
-    template_dir = os.path.join(current_app.config.get('MRBOB_TEMPLATE_DIR'),'blueprint')
+    template_dir = os.path.join(get_template_dir(),'blueprint')
     run_mrbob(template_dir,testing)
 
 
@@ -32,7 +38,7 @@ def start_blueprint(testing=False):
 
 @manager.command
 def start_project(testing=False):
-    template_dir = os.path.join(current_app.config.get('MRBOB_TEMPLATE_DIR'),'project')
+    template_dir = os.path.join(get_template_dir(),'project')
     run_mrbob(template_dir,testing)
 
 
@@ -47,7 +53,7 @@ def main():
         elif sys.argv[1] == 'start-blueprint':
             func = start_blueprint
         else:
-            raise ValueError
+            print_usage()
             sys.exit()
         if len(sys.argv) > 2:
             if sys.argv[2] == '-t' or sys.argv[2] == '--testing':
