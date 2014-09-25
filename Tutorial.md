@@ -314,3 +314,52 @@ ROUTE_MODULES = (
 )
 ```
 
+
+
+now i know this may seem like a bit much for such a small example app,
+but lets not forget that this is called _Flask-XXL_, so its really not intended 
+for such small requirments, if you plan on having a small web-app, with few blueprints,
+that is what Flask is made for, but when you plan on your application growing 
+and you want to handle it with clean system, that is what flask-xxl is for. 
+
+
+##Ch. 5. Views - _part1_ _begining_
+
+-----------
+from here on out we will dump our example app and start fresh, building what hopefully 
+will grow to be a full-featured project management suite. But we will start from the start, or
+at least as far back as you need to when using flask-xxl. 
+
+Now one thing i think almost everyone can agree Django did well was project / (module/app) setup.
+
+with a simple 
+
+```bash
+
+$ manage.py startproject
+
+```
+or 
+```bash
+
+$ manage.py startapp
+```
+you are asked a few simple questions about your intentions and
+wham boom, youve got a new project/app, or at least a number of the files youll 
+want to start off with, as well as a few helpful imports / commented notes to 
+help speed up development. 
+
+Thats the way things should work, so here to start we use 
+
+```bash
+
+$ flaskxxl.py startproject
+
+```
+
+
+
+
+##To Be Continued __.....__
+
+------------------

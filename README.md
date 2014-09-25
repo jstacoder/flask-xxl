@@ -61,4 +61,3 @@
     it basicly is like using app.add_url_rule() method, you
     just dont have to add <code>view_func=ViewName.as_view(endpoint)</code> or at least the
     <code>view_func=</code> part.
-
