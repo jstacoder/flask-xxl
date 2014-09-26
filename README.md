@@ -44,9 +44,24 @@
     ie: 
 
         -   get_block(block_id) <-- requires use of flask.ext.xxl.apps.blog 
+            *   add blocks of html/jinja2/template helpers into the db and access from within templates
+                great for things like header navs or sidebar widgets
+                
         -   get_icon(icon_name,icon_lib) <-- requires use of flask.ext.xxl.apps.blog
+            * flask.ext.xxl.apps.blog comes with 8 icon librarys!!! 
+                -   Glyphicon
+                -   Font Awesome
+                -   Mfg_Labs
+                -   Elusive icons
+                -   Genericons
+                -  and more ... 
+                access any icon anywhere in your templates! even from cms blocks!!!
+                
         -   get_model(model_name,blueprint_name)
-
+            * access any model class from any template (currently only supports sqlalchemy models)
+            
+        -   get_button(name) 
+            * create buttons in the cms and access from within templates
 
 
 -   AppFactory class with many hooks into settings file (makes use of settings file similar to django)
