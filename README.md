@@ -61,3 +61,11 @@
     it basicly is like using app.add_url_rule() method, you
     just dont have to add <code>view_func=ViewName.as_view(endpoint)</code> or at least the
     <code>view_func=</code> part.
+
+
+-   easily start a new project or extend an old one with the flaskxxl-manage.py command line helper tool
+    -   to start a project from scratch
+        <kbd>$ flaskxxl-manage.py start-project</kbd>
+        
+    -   to add to an existing project 
+        <kbd>$ flaskxxl-manage.py start-blueprint</kbd>
