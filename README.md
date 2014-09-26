@@ -25,6 +25,20 @@
                         self._context['some_flag'] = False
                     return self.render()
             ```
+        -   <kbd>BaseView.redirect(endpoint)</kbd>
+        is a reimplementation of <code>flask.helpers.redirect</code> which allows you to directly enter the
+        endpoint, so you dont have to run it through <code>url_for()</code> first. 
+        
+        -   <pre>BaseView.get_env()</pre> returns the current jinja2_env
+        
+        
+        - <pre>BaseView.form_validated()</pre> returns true if all forms validate
+        
+        -   __namespaces imported into BaseView__:
+            BaseView.flash == flask.flash
+            
+        
+            
 
 -   many builtin template globals(context_processors) to use.
     ie: get_block(block_id) <-- requires use of flask.ext.xxl.apps.blog 
