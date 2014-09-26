@@ -41,9 +41,12 @@
             
 
 -   many builtin template globals(context_processors) to use.
-    ie: get_block(block_id) <-- requires use of flask.ext.xxl.apps.blog 
-        get_icon(icon_name,icon_lib) <-- requires use of flask.ext.xxl.apps.blog 
-        get_model(model_name,blueprint_name)
+    ie: 
+        -   get_block(block_id) <-- requires use of flask.ext.xxl.apps.blog 
+           
+        -   get_icon(icon_name,icon_lib) <-- requires use of flask.ext.xxl.apps.blog 
+           
+        -   get_model(model_name,blueprint_name)
 
 
 
