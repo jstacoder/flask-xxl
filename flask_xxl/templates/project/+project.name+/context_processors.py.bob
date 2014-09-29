@@ -1,0 +1,17 @@
+'''
+  example context_processor
+  
+  to use this in a template put this in the CONTEXT_PROCESSORS setting
+  
+  '{{{project.name}}}.context_processors.add_get_ip',
+  
+'''
+from flask import request
+
+def get_users_ip():
+  return request.environ['REMOTE_ADDRESS']
+  
+  
+def add_get_ip():
+  return dict(get_users_ip=get_users_ip)
+  
