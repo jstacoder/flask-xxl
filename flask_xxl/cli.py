@@ -44,7 +44,7 @@ def start_project(testing=False):
 
 def main():
     func = None
-    testing = True
+    testing = False
     if len(sys.argv) <= 1:
         print_usage()
     else:
