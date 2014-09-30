@@ -1,0 +1,21 @@
+'''
+    add any blueprint specific filters here, example filter below
+'''
+import os
+from os import path as op
+
+
+def dir_contents(data):
+    if data:
+        if op.exists(data):
+            if op.realpath(op.isdir(data)):
+                return '\n'.join(map(str,[os.listdir(op.realpath(data))]))
+    return ''
+
+'''
+    then register in setting.py under TEMPLATE_FILTERS like this
+
+    "{{{ blueprint.name }}}.filters.dir_contents",
+'''
+
+
