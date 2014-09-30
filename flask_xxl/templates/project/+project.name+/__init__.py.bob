@@ -1,0 +1,6 @@
+from flask import Blueprint
+
+{{{ project.name }}} = Blueprint('{{{ project.name }}}',__name__,
+                                    url_prefix='{{{project.name}}}',
+                                    template_folder='templates')
+                                    

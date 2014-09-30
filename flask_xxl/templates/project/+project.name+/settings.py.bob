@@ -108,34 +108,7 @@ class BaseConfig(LocalConfig):
             'flask.ext.xxl.filters.markdown',
     ]
 
-    CONTACT_FORM_SETTINGS = {
-    'HEADING':'Send Us a message',
-    'SUBHEADING':'Or a Comment',
-    'OPTIONS':(
-        ('test','opt1'),
-        ('test2','opt2'),
-        ('test3','opt3'),
-        ('test4','opt4'),
-        ('test5','opt5'),
-        ('test6','opt6'),
-    ),
-    'SUBMIT_TEXT':'Send to Us',
-    'COMPANY_ADDRESS':{
-        'NAME':'level2designs',
-        'STREET':'1045 w katella',
-        'CITY':'Orange',
-        'STATE':'CA',
-        'ZIP':'92804',
-        },
-    }
-
-    #BLOG_SIDEBAR_LEFT = False
-    #BLOG_SIDEBAR_RIGHT = True
-    BLOG_SIDEBAR_LEFT = True
-    #BLOG_SIDEBAR_RIGHT = False
-    BLOG_TITLE = 'Dynamic'
-    BLOG_CONTENT = 'some text to put into my<br />Blog'
-
+   
 def get_choices(option):
     return BaseConfig.DYNAMIC_SETTINGS[option]
 
