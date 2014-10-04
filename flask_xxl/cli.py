@@ -1,3 +1,4 @@
+from flask.ext.script import prompt_bool
 from manage import manager
 from mrbob import cli
 import sys
