@@ -34,9 +34,9 @@ def print_templates():
     print ', '.join(map(str,get_templates()))
 
 @manager.option('template',nargs='?',default=None)
-def print_template_files(template):
+def print_template_files(template=None):
     if template is None:
-        print ''
+        print 'please provide a template name'
         return
     else:
         if not template in get_templates():
