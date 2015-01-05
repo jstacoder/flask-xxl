@@ -1,6 +1,6 @@
 from flask.ext.xxl.baseviews import BaseView
 
-class Main{{{ blueprint.name|title }}}View(BaseView):
+class {{{ blueprint.name|title }}}View(BaseView):
     _template = '{{% if blueprint.main_template -%}}
         {{{ blueprint.main_template }}}{{%-  endif %}}'
     _form = None

@@ -10,6 +10,12 @@ import sys
 import os
 from flask import Flask
 from werkzeug.utils import import_string
+import jinja2_highlight
+
+class MyFlask(Flask):
+        jinja_options = dict(Flask.jinja_options)
+        jinja_options.setdefault('extensions',
+                []).append('jinja2_highlight.HighlightExtension')
 
 class NoRouteModuleException(Exception):
     pass
@@ -34,7 +40,7 @@ class AppFactory(object):
         self.bind_db_object = bind_db_object
 
     def get_app(self, app_module_name, **kwargs):
-        self.app = Flask(app_module_name, **kwargs)
+        self.app = MyFlask(app_module_name, **kwargs)
         self.app.config.from_object(self.app_config)
         self.app.config.from_envvar(self.app_envvar, silent=True)
 

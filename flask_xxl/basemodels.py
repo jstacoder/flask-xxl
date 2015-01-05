@@ -8,6 +8,7 @@ from flask import current_app
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm.scoping import scoped_session
 from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty, sessionmaker
 
 class SQLAlchemyMissingException(Exception):
@@ -39,7 +40,12 @@ class BaseMixin(object):
     
     @property
     def session(self):
-        raise NotImplementedError
+        factory = sessionmaker(bind=self.engine)
+        return scoped_session(factory)
+
+    @property
+    def engine(self):
+        return 'x'
 
     @classmethod
     def create(cls, **kwargs):
@@ -59,6 +65,7 @@ class BaseMixin(object):
         except:
             return False
         return self
+
 
     def delete(self, commit=True):
         self.session.delete(self)

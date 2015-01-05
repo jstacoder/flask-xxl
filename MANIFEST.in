@@ -1,0 +1,8 @@
+include README.md
+include Tutorial.md
+include version
+include manage.py
+
+include flask_xxl/templates/project/.mrbob.ini
+include flask_xxl/templates/blueprint/.mrbob.ini
+recursive-include ./flask_xxl/templates *
