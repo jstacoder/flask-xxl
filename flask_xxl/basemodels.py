@@ -4,30 +4,51 @@
     basemodels.py
     ~~~~~~~~~~~
 """
+from functools import wraps
 from flask import current_app
-from sqlalchemy.ext.declarative import as_declarative
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm.scoping import scoped_session
-from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty, sessionmaker
+from inflection import underscore, pluralize
+from sqlalchemy.ext.declarative import as_declarative, declarative_base, declared_attr
+from sqlalchemy.orm import scoped_session, sessionmaker
+from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty
+import sqlalchemy as db
+
+Model = declarative_base()
+
+def ensure_class(f):
+    @wraps(f)
+    def wrapper(*args,**kwargs):
+        if type(args[0]) != DeclarativeMeta:
+            args[0] = args[0].__class__
+        return f(*args,**kwargs)
+    return wrapper
 
 class SQLAlchemyMissingException(Exception):
     pass
-
-try:
-    db = current_app.extensions['sqlalchemy'].db
-except AttributeError, e:
-    raise SQLAlchemyMissingException('Need sqlalchemy installed to use basemodel')
-
 
 class ModelDeclarativeMeta(_BoundDeclarativeMeta):
     pass
 
 @as_declarative(name='Model',metaclass=ModelDeclarativeMeta)
-class BaseMixin(object):
-    __table_args__ = {'extend_existing': True}
+class BaseMixin(Model):
+    _engine = None
+    __abstract__ = True
 
-    id = db.Column(db.Integer,db.Sequence('user_id_seq'),primary_key=True)
+    @staticmethod
+    def make_table_name(name):
+        return underscore(pluralize(name))
+    
+    @declared_attr
+    def __tablename__(self):
+        return BaseMixin.make_table_name(self.__name__)
+
+    @classmethod
+    @ensure_class
+    def query(cls,*args,**kwargs):
+        return 
+
+    @declared_attr
+    def id(self):
+        return db.Column(db.Integer,db.Sequence('user_id_seq'),primary_key=True)
 
     @classmethod
     def get_by_id(cls, id):
@@ -38,6 +59,16 @@ class BaseMixin(object):
             return cls.query.get(int(id))
         return None
     
+    @classmethod
+    @ensure_class
+    def get_all(cls):
+        return cls.query().all()
+
+    @classmethod
+    @ensure_class
+    def query(cls):
+        return cls.session.query(cls)
+
     @property
     def session(self):
         factory = sessionmaker(bind=self.engine)
@@ -45,7 +76,7 @@ class BaseMixin(object):
 
     @property
     def engine(self):
-        return 'x'
+        return self._engine or db.engine
 
     @classmethod
     def create(cls, **kwargs):
@@ -65,7 +96,6 @@ class BaseMixin(object):
         except:
             return False
         return self
-
 
     def delete(self, commit=True):
         self.session.delete(self)
