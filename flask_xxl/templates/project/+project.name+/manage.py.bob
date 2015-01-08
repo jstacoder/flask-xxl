@@ -21,10 +21,10 @@ manager = Manager(app)
 def init_data():
     """Fish data for project"""
     if prompt_bool('Do you want to kill your db?'):
-    try:
-        db.drop_all()
-    except:
-        pass
+        try:
+            db.drop_all()
+        except:
+            pass
     try:
         db.create_all()
     except:
