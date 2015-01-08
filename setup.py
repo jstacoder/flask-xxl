@@ -1,4 +1,4 @@
-VERSION = '0,6,8'
+VERSION = '0,6,9'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
@@ -54,6 +54,12 @@ config = dict(
             'wsgiref==0.1.2',
             'six==1.8.0',
             'mr.bob2==0.2.3',
+            'Flask-DebugToolbar==0.9.2',
+            'Flask-PageDown==0.1.5',
+            'Pygments==2.0.1',
+            'flask-codemirror==0.0.3',
+            'jinja2-highlight==0.6.1',
+            'requests==2.5.1',
             ],
         zip_safe=False,
         entry_points=dict(
