@@ -8,19 +8,16 @@ from functools import wraps
 from flask import current_app
 from inflection import underscore, pluralize
 from sqlalchemy.ext.declarative import as_declarative, declarative_base, declared_attr
+from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta, _QueryProperty
-import sqlalchemy as db
+from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta
+from sqlalchemy import UniqueConstraint,Column,Integer,Text,String,Date,DateTime,ForeignKey,func,create_engine
+
+get_engine = lambda: create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
+Session = lambda: scoped_session(sessionmaker(bind=get_engine()))
 
 Model = declarative_base()
 
-def ensure_class(f):
-    @wraps(f)
-    def wrapper(*args,**kwargs):
-        if type(args[0]) != DeclarativeMeta:
-            args[0] = args[0].__class__
-        return f(*args,**kwargs)
-    return wrapper
 
 class SQLAlchemyMissingException(Exception):
     pass
@@ -28,10 +25,25 @@ class SQLAlchemyMissingException(Exception):
 class ModelDeclarativeMeta(_BoundDeclarativeMeta):
     pass
 
-@as_declarative(name='Model',metaclass=ModelDeclarativeMeta)
+@as_declarative(name='BaseMixin',metaclass=ModelDeclarativeMeta)
 class BaseMixin(Model):
-    _engine = None
     __abstract__ = True
+    _session = None
+
+
+    @property
+    def _engine(self):
+        return get_engine()
+
+    @declared_attr
+    def id(self):
+        return Column(Integer,primary_key=True)
+
+    @classmethod
+    def get_session(cls):
+        if cls._session is None:
+            cls._session = Session()
+        return cls._session
 
     @staticmethod
     def make_table_name(name):
@@ -40,16 +52,7 @@ class BaseMixin(Model):
     @declared_attr
     def __tablename__(self):
         return BaseMixin.make_table_name(self.__name__)
-
-    @classmethod
-    @ensure_class
-    def query(cls,*args,**kwargs):
-        return 
-
-    @declared_attr
-    def id(self):
-        return db.Column(db.Integer,db.Sequence('user_id_seq'),primary_key=True)
-
+    
     @classmethod
     def get_by_id(cls, id):
         if any(
@@ -60,23 +63,8 @@ class BaseMixin(Model):
         return None
     
     @classmethod
-    @ensure_class
     def get_all(cls):
-        return cls.query().all()
-
-    @classmethod
-    @ensure_class
-    def query(cls):
-        return cls.session.query(cls)
-
-    @property
-    def session(self):
-        factory = sessionmaker(bind=self.engine)
-        return scoped_session(factory)
-
-    @property
-    def engine(self):
-        return self._engine or db.engine
+        return cls.query.all()
 
     @classmethod
     def create(cls, **kwargs):
@@ -100,6 +88,10 @@ class BaseMixin(Model):
     def delete(self, commit=True):
         self.session.delete(self)
         return commit and self.session.commit()
+
+    @classmethod
+    def query(cls):
+        return cls.get_session().query(cls)
 
     @property
     def absolute_url(self):

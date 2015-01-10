@@ -1,18 +1,16 @@
 from basemodels import BaseMixin
 from flask import url_for
-from ext import db
 from LoginUtils import encrypt_password, check_password
+from sqlalchemy import Column,String,Integer,Boolean,Date,DateTime,ForeignKey,UnicodeText,Table
+from sqlalchemy.orm import relationship,backref
+
 
 #import sqlalchemy to global namespace
-for attr in dir(db):
-    if not attr.startswith('_'):
-        globals()[attr] = getattr(db,attr)
-
 
 class UnknownUser(object):
     is_unknown = True
 
-class Role(BaseMixin,Model):
+class Role(BaseMixin):
     __tablename__ = 'roles'
 
     name = Column(String(255))
@@ -21,7 +19,7 @@ class Role(BaseMixin,Model):
     can_edit = Column(Boolean,default=False,nullable=False)
     can_delete = Column(Boolean,default=False,nullable=False)
 
-class User(BaseMixin,Model):
+class User(BaseMixin):
     __tablename__ = 'users'
 
     first_name = Column(String(255),default="")
@@ -32,8 +30,6 @@ class User(BaseMixin,Model):
                     'users',lazy='dynamic'))
     add_date = Column(DateTime,default=func.now())
     _pw_hash = Column(UnicodeText,nullable=False)
-    articles = relationship('Article',backref=backref(
-                    'author'),lazy='dynamic',passive_deletes='all')
     age = Column(Integer)
 
 
@@ -89,8 +85,4 @@ class User(BaseMixin,Model):
 
     def _get_edit_url(self):
         return '#'
-
-    @property 
-    def article_count(self):
-        return self.articles.query.count()
 
