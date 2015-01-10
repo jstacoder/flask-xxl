@@ -15,7 +15,7 @@ from sqlalchemy import UniqueConstraint,Column,Integer,Text,String,Date,DateTime
 
 get_engine = lambda: create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
 Session = lambda: scoped_session(sessionmaker(bind=get_engine()))
-
+echo_sql = lambda: current_app.config.get('SQLALCHEMY_ECHO',False)
 Model = declarative_base()
 
 
@@ -30,10 +30,12 @@ class BaseMixin(Model):
     __abstract__ = True
     _session = None
 
-
     @property
     def _engine(self):
-        return get_engine()
+        self._e = get_engine()
+        self._e.echo = echo_sql()
+        return self._e
+        
 
     @declared_attr
     def id(self):
@@ -59,12 +61,12 @@ class BaseMixin(Model):
             (isinstance(id, basestring) and id.isdigit(),
              isinstance(id, (int, float))),
         ):
-            return cls.query.get(int(id))
+            return cls.query().get(int(id))
         return None
     
     @classmethod
     def get_all(cls):
-        return cls.query.all()
+        return cls.query().all()
 
     @classmethod
     def create(cls, **kwargs):
@@ -76,18 +78,20 @@ class BaseMixin(Model):
             setattr(self, attr, value)
         return commit and self.save() or self
 
-    def save(self, commit=True):
+    def save(self,commit=True):
         try:
-            self.session.add(self)
+            session = self.__class__.get_session()
+            session.add(self)
             if commit:
-                self.session.commit()
+                session.commit()
         except:
             return False
         return self
 
     def delete(self, commit=True):
-        self.session.delete(self)
-        return commit and self.session.commit()
+        session = self.__class__.get_session()
+        session.delete(self)
+        return commit and session.commit()
 
     @classmethod
     def query(cls):
