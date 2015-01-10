@@ -14,7 +14,7 @@ from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta
 from sqlalchemy import UniqueConstraint,Column,Integer,Text,String,Date,DateTime,ForeignKey,func,create_engine
 
 get_engine = lambda: create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
-Session = lambda: scoped_session(sessionmaker(bind=get_engine()))
+Session = lambda e: scoped_session(sessionmaker(bind=e))
 echo_sql = lambda: current_app.config.get('SQLALCHEMY_ECHO',False)
 Model = declarative_base()
 
@@ -29,23 +29,24 @@ class ModelDeclarativeMeta(_BoundDeclarativeMeta):
 class BaseMixin(Model):
     __abstract__ = True
     _session = None
+    _e = None
 
     @property
     def _engine(self):
-        self._e = get_engine()
+        if self._e is None:
+           self._e = get_engine()
         self._e.echo = echo_sql()
         return self._e
         
-
     @declared_attr
     def id(self):
         return Column(Integer,primary_key=True)
 
-    @classmethod
-    def get_session(cls):
-        if cls._session is None:
-            cls._session = Session()
-        return cls._session
+    @property
+    def session(self):
+        if self._session is None:
+            self._session = Session(self._engine)
+        return self._session()
 
     @staticmethod
     def make_table_name(name):
@@ -66,7 +67,8 @@ class BaseMixin(Model):
     
     @classmethod
     def get_all(cls):
-        return cls.query().all()
+        tmp = cls()
+        return tmp.query.all()
 
     @classmethod
     def create(cls, **kwargs):
@@ -80,22 +82,21 @@ class BaseMixin(Model):
 
     def save(self,commit=True):
         try:
-            session = self.__class__.get_session()
-            session.add(self)
+            self.session.add(self)
             if commit:
-                session.commit()
-        except:
+                self.session.commit()
+        except Exception, e:
+            print e.message
             return False
         return self
 
     def delete(self, commit=True):
-        session = self.__class__.get_session()
-        session.delete(self)
-        return commit and session.commit()
+        self.session.delete(self)
+        return commit and self.session.commit()
 
-    @classmethod
-    def query(cls):
-        return cls.get_session().query(cls)
+    
+    def query(self):
+        return self.session.query(self)
 
     @property
     def absolute_url(self):
