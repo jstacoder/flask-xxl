@@ -94,9 +94,9 @@ class BaseMixin(Model):
         self.session.delete(self)
         return commit and self.session.commit()
 
-    
+    @property 
     def query(self):
-        return self.session.query(self)
+        return self.session.query(self.__class__)
 
     @property
     def absolute_url(self):
@@ -123,7 +123,20 @@ class BaseMixin(Model):
         return rtn
 
     
-    
+class AuditMixin(object):
+    __abstract__ = True
+
+    @declared_attr
+    def date_added(self):
+        return sq.Column(sq.DateTime,default=dt.now)
+
+    @declared_attr
+    def date_modified(self):
+        return sq.Column(sq.DateTime,onupdate=dt.now)
+
+
+
+
 def _clean_name(name):
     names = name.split('_')
     if len(names) > 1:

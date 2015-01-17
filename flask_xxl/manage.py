@@ -19,7 +19,10 @@ def main(auto=False):
     flaskxxl.test_request_context().push() 
     manager.add_command('mrbob',mrbob_manager)
     manager.add_command('clean',Clean())
-    manager.run(default_command='mrbob')
+    default_cmd = 'mrbob'
+    if len(sys.argv) > 2:
+        default_cmd = 'clean'
+    manager.run(default_command=default_cmd)
 
 if __name__ == '__main__':
     main(auto=True)

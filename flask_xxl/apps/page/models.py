@@ -1,218 +1,99 @@
-from basemodels import BaseMixin
-import datetime
-from ext import db
-from flask import url_for
+import flask
+import json
+import os
+import sqlalchemy as sq
+from sqlalchemy import orm
+sa = sq
+import datetime as dt
+from flask_xxl.basemodels import AuditMixin,BaseMixin as Model
+#try:
+#    from ext import db as Model
+#except ImportError:
+#    import sys
+#    print 'the flask blueprint flask_xxl.apps.page needs a database configured as db in the ext module to work correctley'
+#    sys.exit(1)
 
-for attr in dir(db):
-    globals()[attr] = getattr(db,attr)
+app_base_dir = os.path.abspath(os.path.dirname(__file__))
 
-class Page(BaseMixin,Model):
+
+class Page(Model):
+
     __tablename__ = 'pages'
 
-    name = Column(String(255))
-    description = Column(Text)
-    template_id = Column(Integer,ForeignKey('templates.id'))
-    template = relationship('Template',backref=backref(
-                'pages',lazy='dynamic'))
-    slug = Column(String(255))
-    title = Column(String(255))
-    add_to_nav = Column(Boolean,default=False)
-    date_added = Column(DateTime,default=datetime.datetime)
-    visible = Column(Boolean,default=False)
-    meta_title = Column(String(255))
-    content = Column(Text)
-    use_base_template = Column(Boolean,default=True)
-    added_by = relationship('User',backref=backref(
-        'pages',lazy='dynamic'))
-    user_id = Column(Integer,ForeignKey('users.id'))
-    add_sidebar = Column(Boolean,default=False)
-    short_url = Column(String(255))
+    DEFAULT_TEMPLATE = 'page.html'
 
-    def __repr__(self):
-        if self.name is None:
-            rtn = '<Page: Unnamed | {}'.format(self.line_count)
-        else:
-            rtn = '<Page: {} | {} lines'.format(self.name,self.line_count)
-        return rtn
+    id = sq.Column(sq.Integer,primary_key=True)
 
+    parent_id = sa.Column(sa.Integer,sa.ForeignKey('pages.id'))
 
-    def _get_page_url(self):
-        return url_for('page.pages',slug=self.slug)
+    children = orm.relationship('Page',backref=orm.backref(
+            'parent',remote_side=[id]),lazy='dynamic',primaryjoin='Page.id==Page.parent_id',
+             cascade='all,delete-orphan')
+    title = sq.Column(sq.String(255),unique=True,nullable=False)
+    keywords = sq.Column(sq.Text)
+    slug = sq.Column(sq.String(255),unique=True,
+            nullable=False)
+    template_file = sq.Column(sq.String(255),
+            nullable=False,default=DEFAULT_TEMPLATE)
+    meta_title = sa.Column(sa.String(255))
+    add_right_sidebar = sq.Column(sq.Boolean,default=False)
+    add_left_sidebar = sq.Column(sq.Boolean,default=False)
+    add_to_nav = sq.Column(sq.Boolean,default=False)
+    body_content = sq.Column(sq.Text)
 
-    @staticmethod
-    def _get_create_url():
-        return url_for('admin.add_page')
+    _current = False
+
+    @property
+    def has_children(self):
+        return bool(any(self.children))
+
+    def is_parent_to(self,page=False):
+        if page:
+            return page.id == self.parent.id
+        return self.has_children
+
+    def is_child_of(self,page=None):
+        if page:
+            return page in self.children
+        return self.parent is not None
+
+    def add_child(self,page):
+        # dont reference any page twice
+        if not page in self.children:
+            # dont refrence parent
+            if self.parent and self.parent.id != page.id:
+                self.children.append(page)
+                self.save()
+
+    @property
+    def navlink(self):
+        return (self.title,self.get_absolute_url())
+
+    def get_absolute_url(self):
+        return flask.url_for('.page',slug=self.slug)
 
     @classmethod
     def get_by_slug(cls,slug):
-        return cls.query.filter(cls.slug==slug).first()
+        return cls.query().filter(Page.slug==slug).first()
 
-    def _get_absolute_url(self):
-        return url_for('admin.page_view',slug=self.slug)
-
-    def _get_edit_url(self):
-        return url_for('admin.edit_page',item_id=int(self.id))
-
-    def _get_edit_content_url(self):
-        return url_for('admin.edit_page_content',item_id=int(self.id))
-
-    @property
-    def line_count(self):
-        try:
-            rtn = len(self.content.split('\n'))
-        except:
-            rtn = 0
-        return rtn
-
-    @property
-    def template_name(self):
-        return self.template.name or ''
-
-    @property
-    def block_count(self):
-        return self.blocks.count()
-
-
-class Template(BaseMixin,Model):
-    __tablename__ = 'templates'
-
-    name = Column(String(255),nullable=False,unique=True)
-    body = Column(UnicodeText)
-    filename = Column(String(255))
-    imports = Column(String(255))
-    base_template = Column(String(255))
-    is_base_template = Column(Boolean,default=False)
-
-    def __init__(self,*args,**kwargs):
-        self._raw_template = ''
-        self._head = ''
-        for attr in ['name','body','filename']:
-            tmp = kwargs.pop(attr,None)
-            if tmp is not None:
-                self.__dict__[attr] = attr
-        base = kwargs.pop('base_template',None)
-        if base is None:
-            self.is_base_template = True
-        else:
-            self.is_base_template = False
-            self._add_to_head(self._create_extend(base))
-        imports = kwargs.pop('imports',None)
-        if imports is not None:
-            for f,i in imports:
-                self._add_to_head(self._create_import(f,i))
-        if self.body:
-            self._set_template()
-
-    def _add_to_head(self,itm):
-        self._head = self._head + '\n' + itm
-
-    def _create_extend(self,parent):
-        return '{% extends "%s" %}' % parent
-
-    def _create_import(self,file_name,import_name,with_context=False):
-        fmt = '{% from "%s" import %s %s %}'
-        with_context = with_context or ''
-        return fmt % (file_name,import_name,with_context)
-
-    def _set_template(self):
-        from jinja2 import Template
-        self._raw_template = Template(self._head + self.body[:])
-
-    @property
-    def block_count(self):
-        return len(self._raw_template.blocks)
-
-    @property
-    def blocks(self):
-        return self._raw_template.blocks.keys()
-
-    def set_body(self,data):
-        self.body = data
-        self._set_template()
-    @property
-    def body_body(self):
-        return self.body
-
-    @property
-    def content(self):
-        return self.body[:]
-
-    def _get_edit_url(self):
-        return url_for('admin.edit_template',item_id=int(self.id))
-
-    def _get_absolute_url(self):
-        return url_for('admin.template_view',name=self.name)
-
-    def __repr_(self):
-        if self.name is None:
-            rtn = '<Template: Unnamed | {} lines'.format(self.line_count)
-        else:
-            rtn = '<Template: {} | {} lines'.format(self.name,self.line_count)
-        return rtn
-
-    def __str__(self):
-        return self.body or ''
-
-    @staticmethod
-    def _get_create_url():
-        return url_for('admin.add_template')
-
-    @property
-    def line_count(self):
-        try:
-            rtn = len(self.body.split('\n'))
-        except:
-            rtn = 0
-        return rtn
-
-
-    def get_block_count(self):
-        return len(self._raw_template.blocks.keys())
-
-
-class Block(BaseMixin,Model):
-    __tablename__ = 'blocks'
-
-    name = Column(String(255))
-    content = Column(Text)
-
-    def set_content(self,data):
-        self.content = data
-
-    def render(self):
-        return self.content or ''
-
-    def __str__(self):
-        s = self.content.split('\n')
-        return '<br />'.join(map(str,s))
+    @classmethod
+    def get_page_count(cls):
+        return cls.query().count()
 
     def __repr__(self):
-        if self.name is None:
-            rtn = '<Block: Unnamed | {} lines'.format(self.line_count)
-        else:
-            rtn = '<block: {} | {} lines'.format(self.name,self.line_count)
-        return rtn
+        return '<{}: #{}-{}'.format(self.__class__.__name__,self.id,self.slug)
+
+    def __str__(self):
+        return unicode(self)
+
+    def __unicode__(self):
+        return self.title
 
 
-    @staticmethod
-    def _get_create_url():
-        return url_for('admin.add_block')
+class Category(Model):
 
-    def _get_edit_content_url(self):
-        return url_for('admin.edit_block_content',item_id=int(self.id))
+    name = sa.Column(sa.String(255),nullable=False,unique=True)
+    description = sa.Column(sa.Text)
 
-    def _get_edit_url(self):
-        return url_for('admin.edit_block',item_id=int(self.id))
-
-    def _get_absolute_url(self):
-        return url_for('admin.block_view',name=self.name)
-
-    @property
-    def line_count(self):
-        try:
-            rtn = len(self.content.split('\n'))
-        except:
-            rtn = 0
-        return rtn
-
-
+    def __unicode__(self):
+        return self.name

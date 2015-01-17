@@ -5,6 +5,13 @@
 {{% macro render_dburi(driver,host,user,pw,db,port='3306') %}}
     SQLALCHEMY_DATABASE_URI = '{{{ driver }}}://{{{ user }}}:{{{ pw }}}@{{{ host }}}:{{{ port }}}/{{{ db }}}'
 {{% endmacro %}}
+{{% macro render_app_urls(app) %}}
+    'flask_xxl.apps.{{{ app }}}.urls.routes',
+{{% endmacro %}}
+{{% macro render_install_app(app) %}}
+    'flask_xxl.apps.{{{ app }}}.{{{ app }}}',
+{{% endmacro %}}
+
 """
     settings
     ~~~~~~~~
@@ -36,6 +43,13 @@ class BaseConfig(LocalConfig):
     #####################################################
     URL_MODULES = [
             '{{{project.name}}}.urls.routes',
+            {{% if project.add_apps -%}}
+                {{%- for app in ['admin','page','auth','menu'] -%}}
+                    {{%- if project.get('add_%s' % app) -%}}
+                        {{{ render_app_urls(app) }}}
+                    {{%- endif %}}
+                {{%- endfor %}}
+            {{%- endif %}}                        
             #'flask.ext.xxl.apps.admin.urls.routes',
             #'flask.ext.xxl.apps.auth.urls.routes',
             #'flask.ext.xxl.apps.page.urls.routes',
@@ -51,6 +65,13 @@ class BaseConfig(LocalConfig):
     #####################################################
     BLUEPRINTS = [
             '{{{project.name}}}.{{{project.name}}}',
+            {{%- if project.add_apps %}}
+                {{%- for app in ['admin','page','menu','auth'] %}}
+                    {{%- if project.get('add_%s' % app) %}}
+                        {{{ render_install_app(app) }}}
+                    {{% endif -%}}
+                {{% endfor -%}}
+            {{% endif -%}}
             #'flask.ext.xxl.apps.admin.admin',
             #'flask.ext.xxl.apps.menu.menu',
             #'flask.ext.xxl.apps.page.page',
