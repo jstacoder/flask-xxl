@@ -13,12 +13,21 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta
 from sqlalchemy import UniqueConstraint,Column,Integer,Text,String,Date,DateTime,ForeignKey,func,create_engine
 
-get_engine = lambda: create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
-Session = lambda e: scoped_session(sessionmaker(bind=e))
+
 echo_sql = lambda: current_app.config.get('SQLALCHEMY_ECHO',False)
+get_engine = lambda: create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'],echo=echo_sql())
+Session = lambda e: scoped_session(sessionmaker(bind=e))
+
 Model = declarative_base()
 
+# @classproperty decorator
+class classproperty(object):
+    def __init__(self, getter):
+        self.getter = getter
 
+    def __get__(self, instance, owner):
+        return self.getter(owner)
+    
 class SQLAlchemyMissingException(Exception):
     pass
 
@@ -31,30 +40,26 @@ class BaseMixin(Model):
     _session = None
     _e = None
 
-    @property
-    def _engine(self):
-        if self._e is None:
-           self._e = get_engine()
-        self._e.echo = echo_sql()
-        return self._e
+    @classproperty
+    def _engine(cls):
+        if cls._e is None:
+           cls._e = get_engine()
+        cls._e.echo = echo_sql()
+        return cls._e
         
     @declared_attr
     def id(self):
         return Column(Integer,primary_key=True)
 
-    @property
-    def session(self):
-        if self._session is None:
-            self._session = Session(self._engine)
-        return self._session()
-
-    @staticmethod
-    def make_table_name(name):
-        return underscore(pluralize(name))
+    @classproperty
+    def session(cls):
+        if cls._session is None:
+            cls._session = Session(cls._engine)
+        return cls._session()
     
     @declared_attr
     def __tablename__(self):
-        return BaseMixin.make_table_name(self.__name__)
+        return underscore(pluralize(self.__name__))
     
     @classmethod
     def get_by_id(cls, id):
@@ -62,13 +67,12 @@ class BaseMixin(Model):
             (isinstance(id, basestring) and id.isdigit(),
              isinstance(id, (int, float))),
         ):
-            return cls.query().get(int(id))
+            return cls.query.get(int(id))
         return None
     
     @classmethod
-    def get_all(cls):
-        tmp = cls()
-        return tmp.query.all()
+    def get_all(cls):        
+        return cls.query.all()
 
     @classmethod
     def create(cls, **kwargs):
@@ -80,13 +84,15 @@ class BaseMixin(Model):
             setattr(self, attr, value)
         return commit and self.save() or self
 
-    def save(self,commit=True):
+    def save(self,commit=True,testing=False):
         try:
             self.session.add(self)
             if commit:
                 self.session.commit()
         except Exception, e:
-            print e.message
+            if not testing:
+                raise e
+            print e.message            
             return False
         return self
 
@@ -94,9 +100,9 @@ class BaseMixin(Model):
         self.session.delete(self)
         return commit and self.session.commit()
 
-    @property 
-    def query(self):
-        return self.session.query(self.__class__)
+    @classproperty 
+    def query(cls):
+        return cls.session.query(cls)
 
     @property
     def absolute_url(self):
