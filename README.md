@@ -1,7 +1,8 @@
 ##Flask-XXL 
 ####- A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
 
-_to see this in a real world example take a look at my other project_ [Flask-Cms](https://github.com/jstacoder/flask-cms)
+_to see this in a real world example take a look at my other projects_ [Flask-Cms](https://github.com/jstacoder/flask-cms) or [Flask-Ide](https://github.com/jstacoder/flask-ide)
+
 
 ##What this provides:
 
