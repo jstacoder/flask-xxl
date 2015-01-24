@@ -10,20 +10,29 @@ EXT_ROOT = os.path.abspath(os.path.dirname(__file__))
 MRBOB_TEMPLATE_DIR = os.path.join(EXT_ROOT,'templates')
 
 
-def get_all_files(dirname):
-    rtn = []
+def get_all_files(dirname,seen=None):
+    rtn = set()
+    if seen is None:
+        seen = set()
+    seen.add(dirname)
     for dname,dlist,flist in os.walk(dirname):
         for itm in flist:
-            rtn.append(os.path.join(dname,itm))
+            if not itm.endswith('.pyc'):
+                rtn.add(os.path.join(dname,itm))
         if len(dlist) == 0:
             return rtn
         else:
             for d in dlist:
-                rtn.append(get_all_files(d))
+                pth = os.path.join(dname,d)
+                if not pth in seen:
+                    rtn.update(get_all_files(pth,seen))
+
+remove_dir = lambda dirname,path: path.split(dirname)[-1]
+remove_bob = lambda x: x.replace('.bob','')
 
 
 def get_templates():
-    return os.listdir(MRBOB_TEMPLATE_DIR)
+    return [name for name in os.listdir(MRBOB_TEMPLATE_DIR) if not name.startswith('_') and not name.endswith('.pyc')]
 
 @manager.command
 def print_template_dir():
@@ -42,8 +51,19 @@ def print_template_files(template=None):
         if not template in get_templates():
             print 'Error! {} is not installed'.format(template)
             return
-    #print ''.join(map(str,['{},\n'.format(itm) for itm in os.listdir(os.path.join(MRBOB_TEMPLATE_DIR,template))]))
-    print '\n'.join(map(str,[str(x) for x in get_all_files(os.path.join(MRBOB_TEMPLATE_DIR,template)) if not x is None]))
+    print '\n'.join(
+                    map(
+                        str,
+                            [remove_bob(remove_dir(
+                                MRBOB_TEMPLATE_DIR,x
+                        )) for x in get_all_files(
+                                            os.path.join(
+                                                    MRBOB_TEMPLATE_DIR,template
+                                            )
+                        ) if not x is None and not x.endswith('.pyc')
+                             ]
+                        )
+    )
     
 @manager.option("-t","--testing",action='store_true')
 def start_project(testing=False):
