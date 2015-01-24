@@ -4,7 +4,7 @@ from .views import (AdminDashboardView,AdminPageView,
                     AdminDetailView,AdminEditView,
                     PageListView,AdminBlogView,AdminAddCategoryView,
                     AdminAddBlogView)
-from admin import admin
+from . import admin
 
 routes = [
         ((admin),

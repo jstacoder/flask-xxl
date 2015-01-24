@@ -1,4 +1,4 @@
-from auth import auth 
+from . import auth 
 from .views import AuthLogoutView,AuthLoginView,AuthSignupView
 
 routes = [

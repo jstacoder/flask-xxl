@@ -1,4 +1,4 @@
-from baseviews import BaseView
+from ...baseviews import BaseView
 
 
 class MenuView(BaseView):

@@ -1,6 +1,8 @@
 from flask import Blueprint
 import os
+from os import path as op
 
+exists = lambda x: op.exists(op.join(os.getcwd(),x))
 
 page = Blueprint('page',__name__,
                 template_folder='templates/page',
@@ -9,9 +11,18 @@ page = Blueprint('page',__name__,
                 url_prefix='/page')
 
 
-from .views import *
-from .models import *
-from .admin import *
+
+for module in ['views','models','admin']:
+    if exists(module):
+        _module = __import__(module,globals(),locals(),['.'])
+        for attr in dir(_module):
+            if not attr.startswith('_'):
+                globals()[attr] = getattr(_module,attr)
+
+                
+#from .views import *
+#from .models import *
+#from .admin import *
 
 '''
 @page.before_app_request

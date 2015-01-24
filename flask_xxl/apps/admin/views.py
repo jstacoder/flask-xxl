@@ -6,12 +6,12 @@
     Administrative Views
 """
 import os
-from auth.utils import login_required
+from ..auth.utils import login_required
 from datetime import datetime
-from flask.ext.wtf import Form
+from flask_wtf import Form
 from wtforms.ext.sqlalchemy.orm import model_form
-from baseviews import BaseView,ModelView
-from admin import admin
+from ...baseviews import BaseView,ModelView
+from ..admin import admin
 from flask import request,session,flash
 from .forms import AddBlogForm
 
@@ -181,12 +181,11 @@ class AdminTemplateView(BaseView):
     @staticmethod
     @admin.before_app_request
     def check_templates():
-        from page.models import Template
-        from auth.models import User
-        from app import app
-        from blog.models import Article
+        from ..page.models import Template
+        from ..auth.models import User
+        from flask import current_app
         templates = Template.query.all()
-        template_dir = app.config['ROOT_PATH'] + '/' + 'templates'
+        template_dir = current_app.config['ROOT_PATH'] + '/' + 'templates'
         if not os.path.exists(template_dir):
             os.mkdir(template_dir)
         names = [t.name for t in templates]
@@ -480,9 +479,8 @@ class AdminSettingsView(BaseView):
 
 
 class AdminAddCategoryView(BaseView):
-    from blog.forms import AddCategoryForm
     _template = 'add.html'
-    _form = AddCategoryForm
+    _form = None
     _context = {}
     _form_heading = 'Add a Category'
    
@@ -496,16 +494,18 @@ class AdminAddCategoryView(BaseView):
         self._context['form_args'] = {'heading':self._form_heading}
         self._form = self._form(request.form)
         if self._form.validate():
-            from blog.models import Category
-            c = Category.query.filter(Category.name==self._form.name.data).first()
+            class Category(object):
+                def save(self):
+                    pass
+            c = None#Category.query.filter(Category.name==self._form.name.data).first()
             if c is None:
                 c = Category()
                 c.name = self._form.name.data
                 c.description = self._form.description.data
-                c.save()
-                self.flash('You added category: {}'.format(c.name))
+                #c.save()
+                self.flash('You added category: {}'.format(c.name),'success')
             else:
-                self.flash('There is already a category by that name, try again')
+                self.flash('There is already a category by that name, try again','danger')
         return self.render()
 
 class AdminBlogView(BaseView):
@@ -530,7 +530,9 @@ class AdminAddBlogView(BaseView):
     def post(self):
         self._form = AddBlogForm(request.form)
         if self._form.validate():
-            from blog.models import Blog
+            class Blog(object):
+                def save(self):
+                    pass
             blog = Blog()
             blog.name = self._form.name.data
             blog.date_added = self._form.date_added.data
