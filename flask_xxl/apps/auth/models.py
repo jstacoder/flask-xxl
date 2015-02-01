@@ -11,7 +11,6 @@ class UnknownUser(object):
     is_unknown = True
 
 class Role(BaseMixin):
-    __tablename__ = 'roles'
 
     name = Column(String(255))
     can_view = Column(Boolean,default=True,nullable=False)
@@ -20,8 +19,8 @@ class Role(BaseMixin):
     can_delete = Column(Boolean,default=False,nullable=False)
 
 class User(BaseMixin):
-    __tablename__ = 'users'
 
+    username = Column(String(255),unique=True,nullable=False)
     first_name = Column(String(255),default="")
     last_name = Column(String(255),default="")
     email = Column(String(255),nullable=False,unique=True)
