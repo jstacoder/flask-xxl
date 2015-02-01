@@ -20,7 +20,7 @@ Session = lambda e: scoped_session(sessionmaker(bind=e))
 
 Model = declarative_base()
 
-# @classproperty decorator
+# classproperty decorator
 class classproperty(object):
     def __init__(self, getter):
         self.getter = getter
@@ -35,7 +35,7 @@ class ModelDeclarativeMeta(_BoundDeclarativeMeta):
     pass
 
 @as_declarative(name='BaseMixin',metaclass=ModelDeclarativeMeta)
-class BaseMixin(Model):
+class BaseMixin(object):
     __abstract__ = True
     _session = None
     _e = None
@@ -117,7 +117,7 @@ class BaseMixin(Model):
         if not 'id' in exclude:
             exclude.append('id')
         rtn = []
-        for col in cls.__table__.c._all_cols:
+        for col in cls.__table__.c._all_columns:
             if not col.name in exclude and not col.name.endswith('id'):
                 rtn.append((col.name,_clean_name(col.name)))
         for attr in dir(cls):
