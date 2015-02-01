@@ -1,6 +1,7 @@
 from flask_xxl.basemodels import BaseMixin
 from flask import url_for
 from LoginUtils import encrypt_password, check_password
+from datetime import datetime
 from sqlalchemy import Column,String,Integer,Boolean,Date,DateTime,ForeignKey,UnicodeText,Table
 from sqlalchemy.orm import relationship,backref
 
@@ -27,7 +28,7 @@ class User(BaseMixin):
     role_id = Column(Integer,ForeignKey('roles.id'))
     role = relationship('Role',backref=backref(
                     'users',lazy='dynamic'))
-    add_date = Column(DateTime,default=func.now())
+    add_date = Column(DateTime,default=datetime.now)
     _pw_hash = Column(UnicodeText,nullable=False)
     age = Column(Integer)
 
