@@ -1,4 +1,4 @@
-from basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 from flask import url_for
 from LoginUtils import encrypt_password, check_password
 from sqlalchemy import Column,String,Integer,Boolean,Date,DateTime,ForeignKey,UnicodeText,Table
