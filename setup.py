@@ -1,4 +1,4 @@
-VERSION = '0,7,3'
+VERSION = '0,7,6'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
@@ -60,6 +60,8 @@ config = dict(
             'flask-codemirror==0.0.3',
             'jinja2-highlight==0.6.1',
             'requests==2.5.1',
+            'inflection==0.2.1',
+            'markdown==2.5.2',
             ],
         zip_safe=False,
         entry_points=dict(
