@@ -1,13 +1,20 @@
 from basemodels import BaseMixin
-from ext import db
+import sqlalchemy as sa
 
-#import sqlalchemy to global namespace
-for attr in dir(db):
-    if not attr.startswith('_'):
-        globals()[attr] = getattr(db,attr)
+class Menu(BaseMixin):
+
+    name = sa.Column(sa.String(255),unique=True)
+    
+
+class MenuLink(BaseMixin):
+
+    name = sa.Column(sa.String(255),nullable=False)
+    menu = sa.orm.relationship('Menu',backref=sa.orm.backref('links',lazy='dynamic'))
+    menu_id = sa.Column(sa.Integer,sa.ForeignKey('menus.id'))
+    text = sa.Column(sa.String(255))
+    endpoint = sa.Column(sa.String(255))
 
 
-class Menu(BaseMixin,Model):
-    name = Column(String(255))
+
 
 

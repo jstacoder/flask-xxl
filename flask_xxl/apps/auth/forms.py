@@ -1,4 +1,4 @@
-from ext import Form
+from flask_wtf import Form
 from wtforms import fields, validators
 
 class BaseUserForm(Form):

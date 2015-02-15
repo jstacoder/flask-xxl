@@ -1,8 +1,8 @@
 from flask import session,redirect,request,render_template
-from flask.ext.xxl.baseviews import BaseView
-from auth import auth
-from auth.forms import UserLoginForm, UserSignupForm
-from auth.utils import login_user, logout_user, login_required, admin_required
+from flask_xxl.baseviews import BaseView
+from . import auth
+from .forms import UserLoginForm, UserSignupForm
+from .utils import login_user, logout_user, login_required, admin_required
 from sqlalchemy.exc import IntegrityError
 
 
