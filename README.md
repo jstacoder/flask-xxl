@@ -4,6 +4,9 @@
 _to see this in a real world example take a look at my other projects_ [Flask-Cms](https://github.com/jstacoder/flask-cms) or [Flask-Ide](https://github.com/jstacoder/flask-ide)
 
 
+
+<script data-codementor="jstacoder" data-style="badge" data-theme="dark" src="https://cdn.codementor.io/assets/badge.js"></script>
+
 ##What this provides:
 
 -   basemodels.py 
