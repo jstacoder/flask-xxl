@@ -1,6 +1,10 @@
 ##Flask-XXL 
 ####- A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
 
+
+
+<script data-codementor="jstacoder" data-style="badge" data-theme="dark" src="https://cdn.codementor.io/assets/badge.js"></script>
+
 _to see this in a real world example take a look at my other project_ [Flask-Cms](https://github.com/jstacoder/flask-cms)
 
 ##What this provides:
