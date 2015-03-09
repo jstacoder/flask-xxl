@@ -243,11 +243,11 @@ routes = (
 ```
 
 decorator style:
-
-    @app.route('/')
-    def view_func():
-        return a_view()
-
+```python
+@app.route('/')
+def view_func():
+    return a_view()
+```
 and this leads us to our next setting 
 
 ###ROUTE_MODULES
