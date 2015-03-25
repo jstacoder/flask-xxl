@@ -108,3 +108,7 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
         
     -   to add to an existing project 
         <kbd>$ flaskxxl-manage.py start-blueprint</kbd>
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jstacoder/flask-xxl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
