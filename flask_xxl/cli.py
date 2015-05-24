@@ -15,12 +15,9 @@ def get_template_dir():
 def print_usage():
     print 'flaskxxl-manage.py [start-project] [start-blueprint]'
 
+
 def run_mrbob(template_dir,testing):
-    if testing:
-        target_dir = './testing'
-    else:
-        target_dir = os.curdir
-    if target_dir == os.curdir:
+    if not testing or './testing' == os.curdir:
         if not prompt_bool('not testing, are you sure you want to continue...'):
             sys.exit(0)
     list_questions = False
@@ -33,8 +30,6 @@ def run_mrbob(template_dir,testing):
 def start_blueprint(testing=False):
     template_dir = os.path.join(get_template_dir(),'blueprint')
     run_mrbob(template_dir,testing)
-
-
 
 
 @manager.command
@@ -59,10 +54,9 @@ def main():
         if len(sys.argv) > 2:
             if sys.argv[2] == '-t' or sys.argv[2] == '--testing':
                 testing = True
-            else:
-                testing = False
-        if func is not None:
+        if func:
             func(testing)
+
 
 if __name__ == "__main__":
     with flaskxxl.context() as ctx:
