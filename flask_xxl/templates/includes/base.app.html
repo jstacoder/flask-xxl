@@ -1,0 +1,8 @@
+{{{ service.app_var|default('app') }}}.
+                {{%- block service_type -%}}
+                {{%- endblock service_type -%}}
+                ('{{{ service.service_name }}}',{{%- if service.service_type not in ['value','constant','provider'] -%}}
+                [{{%- include 'includes/deps.html' with context -%}}
+                ,function({{{ ','.join(service.dep_names) }}}){
+                }]{{%- else -%}}{{% block service_value %}}{{% endblock service_value %}}{{%- endif -%}}
+);

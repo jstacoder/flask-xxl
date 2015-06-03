@@ -1,0 +1,2 @@
+{{% extends 'includes/base.app.html' %}}
+{{%- block service_type -%}}factory{{%- endblock -%}}

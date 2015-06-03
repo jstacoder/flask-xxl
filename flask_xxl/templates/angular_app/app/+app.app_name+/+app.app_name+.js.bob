@@ -1,0 +1,25 @@
+'use strict';
+
+var {{{ app.app_var|default('app') }}} = angular.module('{{{ app.app_name }}}',[{{%-
+                                                                                    if app.deps 
+                                                                                -%}}
+                                                                                {{%-
+                                                                                    for dep in app.dep_names 
+                                                                                -%}}
+                                                                                    '{{{ dep }}}'
+                                                                                {{%- 
+                                                                                    if app.dep_names|count
+                                                                                        > 1 and
+                                                                                    app.dep_names.index(dep)
+                                                                                        != app.dep_names|count-1
+                                                                                -%}},
+                                                                                {{%-
+                                                                                    endif 
+                                                                                -%}}
+                                                                                {{%- 
+                                                                                    endfor 
+                                                                                -%}}
+                                                                                {{%- 
+                                                                                    endif 
+                                                                                -%}}]);
+

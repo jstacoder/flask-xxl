@@ -1,0 +1,17 @@
+{{%- set dep_str =  '' -%}}
+    {{%- if service.deps and service.dep_names|count >= 1 -%}}
+        {{%- if service.dep_names|count == 1 -%}}
+            '{{{ dep_name[0] }}}'
+            {{%- set dep_str = dep_name[0] -%}}
+        {{%- else -%}}
+            {{%- set _deps = '%s' -%}}
+            {{%- for dep_name in service.dep_names -%}}
+                {{% if not loop.last -%}}
+                    {{%- set _deps = _deps + ',' -%}}
+                {{%- endif -%}}
+                '{{{ dep_name }}}'
+                {{%- set dep_str = dep_str + (_deps % dep_name) -%}}
+                {{%- if not loop.last -%}},{{%- endif -%}}
+            {{%- endfor -%}}
+        {{%- endif -%}}
+    {{%- endif -%}}

@@ -1,0 +1,2 @@
+{{% extends 'includes/base.app.html' %}}
+{{%- block service_type -%}}constant{{%- endblock -%}}{{%- block service_value -%}}{{{ service.value|default('') }}}{{%- endblock -%}}

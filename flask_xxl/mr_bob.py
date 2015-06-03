@@ -1,13 +1,17 @@
 from flask.ext.script import Manager, prompt_bool
 import os
-from mrbob import cli 
+from mrbob import cli
+import mrbob
+from jinja2.loaders import FileSystemLoader
 import sys
+
 
 manager = Manager(usage="performs mr.bob template runs")
 
 EXT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 MRBOB_TEMPLATE_DIR = os.path.join(EXT_ROOT,'templates')
+mrbob.rendering.jinja2_env.loader = FileSystemLoader(MRBOB_TEMPLATE_DIR)
 
 
 def get_all_files(dirname,seen=None):
@@ -64,10 +68,11 @@ def print_template_files(template=None):
                              ]
                         )
     )
+_template_dir = lambda name: os.path.join(MRBOB_TEMPLATE_DIR,name)
     
 @manager.option("-t","--testing",action='store_true')
 def start_project(testing=False):
-    template_dir = os.path.join(MRBOB_TEMPLATE_DIR,'project')
+    template_dir = _template_dir('project')
     if testing:
         target_dir = './testing'
     else:
@@ -82,7 +87,7 @@ def start_project(testing=False):
 
 @manager.option("-t","--testing",action="store_true")
 def add_blueprint(testing=False):
-    template_dir = os.path.join(MRBOB_TEMPLATE_DIR,'blueprint')
+    template_dir = _template_dir('blueprint')
     if testing:
         target_dir = './testing'
     else:
@@ -95,7 +100,28 @@ def add_blueprint(testing=False):
     args = [template_dir,'-O',target_dir,'-v','-w']
     cli.main(args)
 
-   
+@manager.command
+def angular_app():
+    template_dir = _template_dir('angular_app')
+    target_dir = os.path.join(os.curdir,'static','js')
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+    list_questions = False
+    non_interactive = False
+    args = [template_dir,'-O',target_dir,'-v','-w']
+    cli.main(args)
+
+@manager.command
+def angular_service():
+    template_dir = _template_dir('angular_service')
+    target_dir = os.path.join(os.curdir,'static','js')
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+    list_questions = False
+    non_interactive = False
+    args = [template_dir,'-O',target_dir,'-v','-w']
+    cli.main(args)
+
 
 
 
