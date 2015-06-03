@@ -1,6 +1,8 @@
 ##Flask-XXL 
 ####- A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
 
+[![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/jstacoder)
+
 [![Join the chat at https://gitter.im/jstacoder/flask-xxl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jstacoder/flask-xxl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 _to see this in a real world example take a look at my other projects_ [Flask-Cms](https://github.com/jstacoder/flask-cms) or [Flask-Ide](https://github.com/jstacoder/flask-ide)
@@ -108,3 +110,7 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
         
     -   to add to an existing project 
         <kbd>$ flaskxxl-manage.py start-blueprint</kbd>
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jstacoder/flask-xxl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
