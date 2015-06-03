@@ -47,7 +47,7 @@ class AppFactory(object):
 
         self._set_path()
         self._bind_extensions()
-        self._register_blueprints()
+        #self._register_blueprints()
         self._register_routes()
         self._register_context_processors()
         self._register_template_filters()
@@ -66,8 +66,9 @@ class AppFactory(object):
 
     def _register_template_extensions(self):
         self.app.jinja_options = dict(Flask.jinja_options)
+        exts = self.app.config.get('TEMPLATE_EXTENSIONS') or ['jinja2_highlight.HighlightExtension']
         self.app.jinja_options.setdefault('extensions',[])\
-                                .append('jinja2_highlight.HighlightExtension')
+                                .extend(exts)
 
     def _bind_extensions(self):
         if self.app.config.get('VERBOSE',False):
