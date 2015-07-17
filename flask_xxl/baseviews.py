@@ -30,7 +30,12 @@ class BaseView(MethodView):
                 self._context['form'] = self._form
             choices = self._context.get('choices')
             if choices:
-                self._context['form'].template.template.choices = choices
+                for field in self._context['form']:
+                    if hasattr(field,field.__name__) and hasattr(getattr(field,field.__name__),field.__name__):
+                        inner_field = getattr(getattr(field,field.__name__),getattr(fiels.__name__))
+                        if hasattr(inner_field,'choices'):
+                            setattr(inner_field,'choices',choices)
+                #self._context['form'].template.template.choices = choices
             for f,v in self._form_args.items():
                 self._form.__dict__[f].data = v
         return render_template(self._template,**self._context)
