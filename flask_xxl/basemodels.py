@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
-
 """
     basemodels.py
     ~~~~~~~~~~~
 """
+import os
 from functools import wraps
-from flask import current_app
+from werkzeug.local import LocalProxy
+from flask import current_app,g
+try:
+    from flask import _app_ctx_stack as stack
+except ImportError:
+    from flask import _request_ctx_stack as stack
+
 from inflection import underscore, pluralize
 from sqlalchemy.ext.declarative import as_declarative, declarative_base, declared_attr
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta
 from sqlalchemy import UniqueConstraint,Column,Integer,Text,String,Date,DateTime,ForeignKey,func,create_engine
-
-
-echo_sql = lambda: current_app.config.get('SQLALCHEMY_ECHO',False)
-get_engine = lambda: create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'],echo=echo_sql())
-Session = lambda e: scoped_session(sessionmaker(bind=e))
-
-Model = declarative_base()
 
 # classproperty decorator
 class classproperty(object):
@@ -27,6 +26,14 @@ class classproperty(object):
 
     def __get__(self, instance, owner):
         return self.getter(owner)
+
+
+echo_sql = lambda: os.environ.get() or current_app.config.get('SQLALCHEMY_ECHO',False)
+get_engine = lambda: create_engine(os.environ.get('DATABASE_URI') or current_app.config['SQLALCHEMY_DATABASE_URI'],echo=echo_sql())
+Session = lambda e: scoped_session(sessionmaker(bind=e))
+
+Model = declarative_base()
+
     
 class SQLAlchemyMissingException(Exception):
     pass
@@ -39,6 +46,12 @@ class BaseMixin(object):
     __abstract__ = True
     _session = None
     _e = None
+    _meta = None
+
+    def __init__(self,*args,**kwargs):
+        super(BaseMixin,self).__init__(*args,**kwargs)
+        metadata = BaseMixin.metadata or Model.metadata
+        self.metadata = BaseMixin.metadata = metadata
 
     @classproperty
     def _engine(cls):
@@ -153,3 +166,36 @@ def _clean_name(name):
     else:
         name = names[0].title()
     return name
+
+class DBObject(object):
+    _session = None
+    _engine = None
+    _metadata = None
+
+    @staticmethod
+    def check_ctx():
+        return stack.top is not None
+    
+    @classproperty
+    def session(cls):
+        sess = cls._session
+        if sess is None:
+            sess = DBObject._session = scoped_session(sessionmaker(bind=DBObject.engine))
+        return sess
+
+    @classproperty
+    def engine(cls):
+        engine = cls._engine 
+        if engine is None:
+            engine = cls._engine = cls.check_ctx() and current_app.config.get('DATABASE_URI') or os.environ.get('DATABASE_URI')
+        return engine
+    
+    @classproperty
+    def metadata(cls):
+        meta = cls._metadata
+        if meta is None:
+            meta = cls._metadata = BaseMixin.metadata
+        meta.bind = meta.bind if meta.bind else cls.engine
+        return meta
+
+db = LocalProxy(DBObject)
