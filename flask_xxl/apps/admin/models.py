@@ -1,20 +1,17 @@
-from basemodels import BaseMixin
+import sqlalchemy as sa
+from ...basemodels import BaseMixin
 from LoginUtils import check_password, encrypt_password
-from ext import db
-
-for attr in dir(db):
-    globals()[attr] = getattr(db,attr)
+print 'importing flask_xxl.apps.admin.models as ',__name__
 
 
-class Setting(BaseMixin,Model):
-    __tablename__ = 'settings'
+class Setting(BaseMixin):
 
-    name = Column(String(255),nullable=False,unique=True)
-    setting_type_id = Column(Integer,ForeignKey('types.id'))
-    setting_type = relationship('Type',backref=backref(
+    name = sa.Column(sa.String(255),nullable=False,unique=True)
+    setting_type_id = sa.Column(sa.Integer,sa.ForeignKey('types.id'))
+    setting_type = sa.orm.relationship('Type',backref=sa.orm.backref(
         'settings',lazy='dynamic'))
-    default = Column(String(255))
-    value = Column(String(255))
+    default = sa.Column(sa.String(255))
+    value = sa.Column(sa.String(255))
 
     @property
     def widget(self):
@@ -23,27 +20,26 @@ class Setting(BaseMixin,Model):
         else:
             return ''
 
-class Type(BaseMixin,Model):
-    __tablename__ = 'types'
+class Type(BaseMixin):
 
-    name = Column(String(255),nullable=False)
-    widgets = relationship('Widget',backref=backref(
+
+    name = sa.Column(sa.String(255),nullable=False)
+    widgets = sa.orm.relationship('Widget',backref=sa.orm.backref(
         'type'),lazy='dynamic')
-    html = Column(Text)
-    field_type = Column(String(255))
-    required = Column(Boolean,default=False)
-    data_type = Column(String(255))
+    html = sa.orm.Column(sa.orm.Text)
+    field_type = sa.Column(sa.String(255))
+    required = sa.Column(sa.Boolean,default=False)
+    data_type = sa.Column(sa.String(255))
 
     def __repr__(self):
         return self.name or ''
 
-class Widget(BaseMixin,db.Model):
-    __tablename__ = 'widgets'
+class Widget(BaseMixin):
 
-    name = Column(String(255),nullable=False)
-    title = Column(String(255))
-    content = Column(Text,nullable=False)
-    type_id = Column(Integer,ForeignKey('types.id'))
+    name = sa.Column(sa.String(255),nullable=False)
+    title = sa.Column(sa.String(255))
+    content = sa.Column(sa.Text,nullable=False)
+    type_id = sa.Column(sa.Integer,sa.ForeignKey('types.id'))
 
     def __repr__(self):
         return self.name

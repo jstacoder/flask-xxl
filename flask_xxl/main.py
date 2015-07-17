@@ -9,7 +9,7 @@ import jinja2_highlight
 import sys
 import os
 from flask import Flask
-from werkzeug.utils import import_string
+from werkzeug.utils import import_string,find_modules
 import jinja2_highlight
 
 class MyFlask(Flask):
@@ -49,6 +49,8 @@ class AppFactory(object):
         self._bind_extensions()
         #self._register_blueprints()
         self._register_routes()
+        self._load_models()
+        self._load_views()
         self._register_context_processors()
         self._register_template_filters()
         self._register_template_extensions()
@@ -63,6 +65,21 @@ class AppFactory(object):
         module = import_string(module_name)
 
         return module, object_name
+
+    def _load_resource(self,typename):
+        for blueprint_path in self.app.config.get('BLUEPRINTS', []):
+            module_name, object_name = blueprint_path.rsplit('.', 1)
+            modules = find_modules(module_name)
+            for module in modules:
+                if typename in module:
+                    print module
+                    import_string(module)
+
+    def _load_views(self):
+        return self._load_resource('views')
+
+    def _load_models(self):
+        return self._load_resource('models')
 
     def _register_template_extensions(self):
         self.app.jinja_options = dict(Flask.jinja_options)

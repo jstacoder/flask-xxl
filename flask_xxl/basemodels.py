@@ -28,7 +28,7 @@ class classproperty(object):
         return self.getter(owner)
 
 
-echo_sql = lambda: os.environ.get() or current_app.config.get('SQLALCHEMY_ECHO',False)
+echo_sql = lambda: os.environ.get('DATABASE_URI') or current_app.config.get('SQLALCHEMY_ECHO',False)
 get_engine = lambda: create_engine(os.environ.get('DATABASE_URI') or current_app.config['SQLALCHEMY_DATABASE_URI'],echo=echo_sql())
 Session = lambda e: scoped_session(sessionmaker(bind=e))
 
