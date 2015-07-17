@@ -122,27 +122,35 @@ class AppFactory(object):
             print 'starting routing'
         for url_module in self.app.config.get('URL_MODULES',[]):
             if self.app.config.get('VERBOSE',False):
-                print url_module
+                #print url_module
+                pass
             module,r_name = self._get_imported_stuff_by_path(url_module)
             if self.app.config.get('VERBOSE',False):
-                print r_name
-                print module
-            if hasattr(module,r_name):
+                pass
+                #print module
+            if r_name == 'routes' and hasattr(module,r_name):
                 if self.app.config.get('VERBOSE',False):
-                    print 'setting {}'.format(r_name)
+                    print '\tsetting up routing for {} with\n\troute module {}\n'.format(module.__package__,module.__name__)
                 self._setup_routes(getattr(module,r_name))
             else:
                 raise NoRouteModuleException('No {r_name} url module found'.format(r_name=r_name))
+        if self.app.config.get('VERBOSE',False):
+            print 'Finished registering blueprints and url routes'
+
 
     def _setup_routes(self,routes):
         for route in routes:
             blueprint,rules = route[0],route[1:]
             for pattern, view in rules:
+                if self.app.config.get('VERBOSE',False):
+                    print '\t\tplugging url Pattern:',pattern
+                    print '\t\tinto View function:',view.func_name
+                    print
                 if type(blueprint) == type(tuple()):
                     blueprint = blueprint[0]
-                blueprint.add_url_rule(pattern,view_func=view)
+                blueprint.add_url_rule(pattern,view.func_name,view_func=view)
             if not blueprint in self.app.blueprints:
                 if self.app.config.get('VERBOSE',False):
-                    print 'registering {}'.format(str(blueprint))
+                    print '\n\t\t\tNow registering {} as blueprint\n\n'.format(str(blueprint.name))
                 self.app.register_blueprint(blueprint)
 
