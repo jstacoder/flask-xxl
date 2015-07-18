@@ -9,21 +9,6 @@ page = Blueprint('page',__name__,
                 static_url_path='/_page_static/',
                 static_folder=os.path.abspath(os.path.dirname(__file__)),
                 url_prefix='/page')
-
-
-
-for module in ['views','models','admin']:
-    if exists(module):
-        _module = __import__(module,globals(),locals(),['.'])
-        for attr in dir(_module):
-            if not attr.startswith('_'):
-                globals()[attr] = getattr(_module,attr)
-
-                
-#from .views import *
-#from .models import *
-#from .admin import *
-
 '''
 @page.before_app_request
 def add_pages():

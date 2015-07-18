@@ -43,6 +43,9 @@ class ModelDeclarativeMeta(_BoundDeclarativeMeta):
 
 @as_declarative(name='BaseMixin',metaclass=ModelDeclarativeMeta)
 class BaseMixin(object):
+    __table_args__ = {
+        'extend_existing':True
+    }
     __abstract__ = True
     _session = None
     _e = None

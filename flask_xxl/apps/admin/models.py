@@ -1,7 +1,11 @@
 import sqlalchemy as sa
 from ...basemodels import BaseMixin
 from LoginUtils import check_password, encrypt_password
-print 'importing flask_xxl.apps.admin.models as ',__name__
+from ...baseviews import is_verbose
+
+
+if is_verbose():
+    print 'importing flask_xxl.apps.admin.models as ',__name__
 
 
 class Setting(BaseMixin):
@@ -22,11 +26,10 @@ class Setting(BaseMixin):
 
 class Type(BaseMixin):
 
-
     name = sa.Column(sa.String(255),nullable=False)
     widgets = sa.orm.relationship('Widget',backref=sa.orm.backref(
         'type'),lazy='dynamic')
-    html = sa.orm.Column(sa.orm.Text)
+    html = sa.Column(sa.Text)
     field_type = sa.Column(sa.String(255))
     required = sa.Column(sa.Boolean,default=False)
     data_type = sa.Column(sa.String(255))

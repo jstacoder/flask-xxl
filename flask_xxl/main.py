@@ -8,9 +8,11 @@
 import jinja2_highlight
 import sys
 import os
-from flask import Flask
+from flask import Flask,views
 from werkzeug.utils import import_string,find_modules
 import jinja2_highlight
+from .baseviews import is_verbose
+
 
 class MyFlask(Flask):
         jinja_options = dict(Flask.jinja_options)
@@ -43,6 +45,7 @@ class AppFactory(object):
         self.app = MyFlask(app_module_name, **kwargs)
         self.app.config.from_object(self.app_config)
         self.app.config.from_envvar(self.app_envvar, silent=True)
+        self.app.config['VERBOSE'] = is_verbose()
 
 
         self._set_path()
@@ -60,20 +63,37 @@ class AppFactory(object):
     def _set_path(self):
         sys.path.append(self.app.config.get('ROOT_PATH',''))
 
+    def _is_public_attr(self,name):
+        return not name.startswith('_')
+
     def _get_imported_stuff_by_path(self, path):
         module_name, object_name = path.rsplit('.', 1)
         module = import_string(module_name)
-
         return module, object_name
 
     def _load_resource(self,typename):
         for blueprint_path in self.app.config.get('BLUEPRINTS', []):
             module_name, object_name = blueprint_path.rsplit('.', 1)
+            blueprint_module, bp_name = self._get_imported_stuff_by_path(blueprint_path)
+            blueprint = getattr(blueprint_module,bp_name)
             modules = find_modules(module_name)
             for module in modules:
                 if typename in module:
-                    print module
-                    import_string(module)
+                    mod = import_string(module)
+                    for itm in dir(mod):
+                        cls = getattr(mod,itm)
+                        if self._is_public_attr(itm) and\
+                                itm[0] == str(itm[0]).upper() and\
+                                'class' in str(cls) and\
+                                'view' in str(itm).lower():
+
+                            if hasattr(cls,'_add_default_routes') and\
+                                    getattr(cls,'_default_view_routes'):
+                                if is_verbose():
+                                    print 'getting default routes for ',cls.__name__
+                                getattr(cls,'_add_default_routes')(app=blueprint or self.app)
+
+
 
     def _load_views(self):
         return self._load_resource('views')
