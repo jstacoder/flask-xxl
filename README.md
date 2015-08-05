@@ -125,3 +125,4 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jstacoder/flask-xxl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+for more fun checkout the [wiki](https://github.com/jstacoder/flask-xxl/wiki)
