@@ -2,7 +2,6 @@ Flask==0.10.1
 Flask-Alembic==1.0.2
 Flask-DebugToolbar==0.9.2
 Flask-PageDown==0.1.5
-Flask-SQLAlchemy==2.0
 Flask-Script==2.0.5
 Flask-WTF==0.10.2
 Jinja2==2.7.3
