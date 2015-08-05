@@ -17,7 +17,15 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
     -       any blueprints listed in your settings under `BLUEPRINTS` will be imported and registered on your app and if that blueprint is a package any files it contains named `models.py` or `views.py` will be imported as well, so no more need to manually import your views and models giving odd errors if you dont do it in the exact correct order!!
 
 -   basemodels.py 
-    -   with a BaseMixin class that provides many useful CRUD operations, IE: model.save(), model.delete()
+    -   with a sqlalchemy compatible BaseMixin class
+        - provides many useful CRUD operations, IE: model.save(), model.delete()
+        - BaseMixin generates __tablename__ automaticlly
+        - BaseMixin adds an auto incrementing `id` field, as the primary_key to each model
+        - BaseMixin.session is current model classes session
+        - BaseMixin.engine is the current db engine
+        - BaseMixin.query is the models sqlalchemy query from its session
+        - BaseMixin.get_all() -> function to return all of a model
+        - BaseMixin.get(*args,**kwargs) -> get single model by attr values, mainly for id=x
 
 -   baseviews.py
     -   with a BaseView class that is subclassed from Flask.views.MethodView to allow easy definition of view responses to get and post requests.
