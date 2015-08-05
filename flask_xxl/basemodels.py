@@ -16,52 +16,46 @@ from inflection import underscore, pluralize
 from sqlalchemy.ext.declarative import as_declarative, declarative_base, declared_attr
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask.ext.sqlalchemy import SQLAlchemy, _BoundDeclarativeMeta
 from sqlalchemy import UniqueConstraint,Column,Integer,Text,String,Date,DateTime,ForeignKey,func,create_engine
 
 # classproperty decorator
 class classproperty(object):
     def __init__(self, getter):
         self.getter = getter
-
     def __get__(self, instance, owner):
         return self.getter(owner)
 
 
-echo_sql = lambda: os.environ.get('DATABASE_URI') or current_app.config.get('SQLALCHEMY_ECHO',False)
-get_engine = lambda: create_engine(os.environ.get('DATABASE_URI') or current_app.config['SQLALCHEMY_DATABASE_URI'],echo=echo_sql())
-Session = lambda e: scoped_session(sessionmaker(bind=e))
+echo_sql = lambda: os.environ.get('DATABASE_URI') and current_app.config.get('SQLALCHEMY_ECHO',False)
+get_engine = lambda: create_engine(os.environ.get('DATABASE_URI') or current_app.config['DATABASE_URI'],echo=echo_sql())
 
-Model = declarative_base()
+Base = declarative_base()
 
     
 class SQLAlchemyMissingException(Exception):
     pass
 
-class ModelDeclarativeMeta(_BoundDeclarativeMeta):
-    pass
-
-@as_declarative(name='BaseMixin',metaclass=ModelDeclarativeMeta)
-class BaseMixin(object):
+class BaseMixin(Base):
     __table_args__ = {
         'extend_existing':True
     }
     __abstract__ = True
     _session = None
-    _e = None
+    _engine = None
+    _query = None
     _meta = None
 
     def __init__(self,*args,**kwargs):
         super(BaseMixin,self).__init__(*args,**kwargs)
-        metadata = BaseMixin.metadata or Model.metadata
+        metadata = BaseMixin.metadata or Base.metadata
         self.metadata = BaseMixin.metadata = metadata
 
     @classproperty
-    def _engine(cls):
-        if cls._e is None:
-           cls._e = get_engine()
-        cls._e.echo = echo_sql()
-        return cls._e
+    def engine(cls):
+        if BaseMixin._engine is None:
+           BaseMixin._engine = get_engine()
+        BaseMixin._engine.echo = echo_sql()
+        return BaseMixin._engine
         
     @declared_attr
     def id(self):
@@ -70,8 +64,14 @@ class BaseMixin(object):
     @classproperty
     def session(cls):
         if cls._session is None:
-            cls._session = Session(cls._engine)
-        return cls._session()
+            cls._session = scoped_session(sessionmaker(bind=cls.engine))()
+        return cls._session
+        
+    @classproperty
+    def query(cls):
+        if cls._query is None:
+            cls._query = cls.session.query(cls)
+        return cls._query
     
     @declared_attr
     def __tablename__(self):
@@ -116,17 +116,12 @@ class BaseMixin(object):
         self.session.delete(self)
         return commit and self.session.commit()
 
-    @classproperty 
-    def query(cls):
-        return cls.session.query(cls)
-
     @property
     def absolute_url(self):
         return self._get_absolute_url()
 
     def _get_absolute_url(self):
         raise NotImplementedError('need to define _get_absolute_url')
-
 
     @classmethod
     def get_all_columns(cls,exclude=['id']):
@@ -155,9 +150,6 @@ class AuditMixin(object):
     @declared_attr
     def date_modified(self):
         return sq.Column(sq.DateTime,onupdate=dt.now)
-
-
-
 
 def _clean_name(name):
     names = name.split('_')
