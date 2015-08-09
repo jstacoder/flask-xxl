@@ -1,4 +1,4 @@
-from basemodels import BaseMixin
+from ...basemodels import BaseMixin
 import sqlalchemy as sa
 
 class Menu(BaseMixin):

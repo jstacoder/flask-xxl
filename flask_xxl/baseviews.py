@@ -1,16 +1,49 @@
+import os
 from flask.views import MethodView
 from flask.templating import render_template
 from flask.helpers import url_for
 from flask import redirect, flash
 from wtforms.form import FormMeta
+from .basemodels import classproperty
 
-class BaseView(MethodView):
+
+is_verbose = lambda: os.environ.get('VERBOSE') and True or False
+
+class Flasher(object):
+    DEFAULT_CATEGORY = 'warning'
+
+    def flash(self,msg,cat=None):
+        cat = cat or self.DEFAULT_CATEGORY
+        flash(msg,cat)
+
+    def add_warning(self,*args,**kwargs):
+        self.flash(*args,**kwargs)
+
+    def add_error(self,msg):
+        self.flash(msg=msg,cat='danger')
+
+    def add_info(self,msg):
+        self.flash(msg,'info')
+
+    def add_success(self,msg):
+        self.flash(msg,'success')
+
+class BaseView(MethodView,Flasher):
     _template = None
     _form = None
     _context = {}
     _form_obj = None
     _obj_id = None
     _form_args = {}
+    _default_view_routes = {}
+
+    @classmethod
+    def _add_default_routes(cls,app=None):        
+        for route,endpoint in cls._default_view_routes.items():
+            if is_verbose():
+                print 'attaching',route,'to view func',endpoint
+            app.add_url_rule(route,endpoint,view_func=cls.as_view(endpoint))
+
 
     def render(self,**kwargs):
         if self._template is None:
@@ -30,7 +63,13 @@ class BaseView(MethodView):
                 self._context['form'] = self._form
             choices = self._context.get('choices')
             if choices:
-                self._context['form'].template.template.choices = choices
+                for field in self._context['form']:
+                    if hasattr(field,field.__name__) and hasattr(getattr(field,field.__name__),field.__name__):
+                        inner_field = getattr(getattr(field,field.__name__),getattr(fiels.__name__))
+                        if hasattr(inner_field,'choices'):
+                            setattr(inner_field,'choices',choices)
+                # the 6 lines above replace the line below, delete it once we verify it works
+                #self._context['form'].template.template.choices = choices
             for f,v in self._form_args.items():
                 self._form.__dict__[f].data = v
         return render_template(self._template,**self._context)
@@ -40,12 +79,6 @@ class BaseView(MethodView):
             return redirect(url_for(endpoint,**kwargs))
         return redirect(endpoint,**kwargs)
         
-
-    def flash(self,*args,**kwargs):
-        if not 'category' in kwargs:
-            kwargs['category'] = 'warning'
-        flash(*args,**kwargs)
-
     def form_validated(self):
         if self._form:
             return self._form().validate()
@@ -69,6 +102,14 @@ class BaseView(MethodView):
 
 
 class ModelView(BaseView):
+    # ModelView is an abstract class
+    # just an interface really
+    # to use the ModelView create your own view class
+    # and use this as the parent class, and 
+    # set its _model class attr to the class to wrap ie:
+    # 
+    # class UserModelView(ModelView):
+    #   _model = User
     _model = None
 
     def render(self,**kwargs):
@@ -105,3 +146,28 @@ class ModelView(BaseView):
     def get_by_id(self,model_id):
         tmp = self._model.get_by_id(model_id)
         return tmp
+
+
+class ModelAPIView(ModelView):
+    __abstract__ = True
+
+    @classproperty
+    def _default_view_routes(cls):
+        if cls is ModelAPIView:
+            return {}
+        name = cls.__name__.lower()
+        _default_view_routes = {
+                '/{}/list'.format(name):'{}-list'.format(name),
+                '/{}/detail'.format(name):'{}-detail'.format(name),
+                '/{}/edit'.format(name):'{}-edit'.format(name),
+        }
+        return _default_view_routes
+
+
+    def render(self,**kwargs):
+        old_rtn = super(ModelAPIView,self).render(**kwargs)
+        rtn = make_response(json.dumps(self._context))
+        rtn.headers['Content-Type'] = 'application/json'
+        return rtn
+    
+    

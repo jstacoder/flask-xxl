@@ -1,9 +1,12 @@
-from flask_xxl.baseviews import BaseView
+from flask_xxl.baseviews import BaseView,ModelAPIView
 import flask
 from . import page
 from .forms import TestForm,ContactUsForm
+from .models import Page
 
 
+class TestView(ModelAPIView):
+    _model = Page
 
 class ContactFormView(BaseView):
     _template = 'contact.html'
