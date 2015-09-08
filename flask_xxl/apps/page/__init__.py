@@ -5,8 +5,8 @@ from os import path as op
 exists = lambda x: op.exists(op.join(os.getcwd(),x))
 
 page = Blueprint('page',__name__,
-                template_folder='templates/page',
-                static_url_path='/_page_static/',
+                template_folder='templates',
+                static_url_path='/_page_static',
                 static_folder=os.path.abspath(os.path.dirname(__file__)),
                 url_prefix='/page')
 '''
