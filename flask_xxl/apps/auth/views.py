@@ -16,7 +16,7 @@ class AuthLoginView(BaseView):
 
     def post(self):
         form = self._form()
-        from auth.models import User
+        from .models import User
         if form.validate():
             email = form.email.data
             pw = form.password.data
@@ -61,7 +61,7 @@ class AuthSignupView(BaseView):
 class AuthLogoutView(BaseView):
  
     def get(self):
-        from auth.models import User
+        from .models import User
         if 'user_id' in session:
             user = User.get_by_id(session['user_id'])
             logout_user(user)

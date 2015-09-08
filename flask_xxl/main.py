@@ -178,14 +178,22 @@ class AppFactory(object):
     def _setup_routes(self,routes):
         for route in routes:
             blueprint,rules = route[0],route[1:]
-            for pattern, view in rules:
+            #for pattern,endpoint,view in rules:
+            for itm in rules:
+                if len(itm) == 3:
+                    pattern,endpoint,view = itm
+                else:
+                    pattern,view = itm
+                    endpoint = None
+            #for pattern,endpoint,view in rules:
                 if self.app.config.get('VERBOSE',False):
                     print '\t\tplugging url Pattern:',pattern
-                    print '\t\tinto View function:',view.func_name
+                    print '\t\tinto View class/function:',hasattr(view,'func_name') and view.view_class.__name__ or view.__name__
+                    print '\t\tat endpoint:',endpoint or view.func_name
                     print
                 if type(blueprint) == type(tuple()):
                     blueprint = blueprint[0]
-                blueprint.add_url_rule(pattern,view.func_name,view_func=view)
+                blueprint.add_url_rule(pattern,endpoint or view.func_name,view_func=hasattr(view,'func_name') and view or view.as_view(endpoint))
             if not blueprint in self.app.blueprints:
                 if self.app.config.get('VERBOSE',False):
                     print '\n\t\t\tNow registering {} as blueprint\n\n'.format(str(blueprint.name))

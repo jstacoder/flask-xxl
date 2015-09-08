@@ -7,7 +7,7 @@
     Global settings for project.
 """
 import os
-from .test_local_settings import LocalConfig
+from .local_settings import LocalConfig
 
 class BaseConfig(LocalConfig):
     SYSTEM_MESSAGE_CATEGORIES = [
@@ -163,6 +163,8 @@ class BaseConfig(LocalConfig):
     BLOG_CONTENT = 'some text to put into my<br />Blog'
 
     DEFAULT_ICON_LIBRARY = 'octicon'
+
+    VERBOSE = True
 
 def get_choices():
     return BaseConfig.CONTACT_FORM_SETTINGS['OPTIONS']
