@@ -34,6 +34,9 @@ class NoBlueprintException(Exception):
 class NoExtensionException(Exception):
     pass
 
+class NoInstalledBlueprintsSettingException(Exception):
+    pass
+
 class AppFactory(object):
 
     def __init__(self, config, envvar='PROJECT_SETTINGS', bind_db_object=True):
@@ -72,7 +75,10 @@ class AppFactory(object):
         return module, object_name
 
     def _load_resource(self,typename):
-        for blueprint_path in self.app.config.get('BLUEPRINTS', []):
+        bp_settings_path = ((self.app.config.get('BLUEPRINTS',None) and 'BLUEPRINTS') or (self.app.config.get('INSTALLED_BLUEPRINTS',None) and 'INSTALLED_BLUEPRINTS') or False)
+        if not bp_settings_path:
+                raise NoInstalledBlueprintsSettingException('You must have a setting for either INSTALLED_BLUEPRINTS or BLUEPRINTS')
+        for blueprint_path in self.app.config.get(bp_settings_path, []):
             module_name, object_name = blueprint_path.rsplit('.', 1)
             blueprint_module, bp_name = self._get_imported_stuff_by_path(blueprint_path)
             blueprint = getattr(blueprint_module,bp_name)

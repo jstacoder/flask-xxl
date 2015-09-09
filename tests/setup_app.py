@@ -12,7 +12,8 @@ class TestApp(TestCase):
         BaseModel.metadata.create_all()
         
     def create_app(self):
-        self.app = AppFactory(BaseConfig).get_app(__name__)
+        from . import app
+        self.app = app
         self.client = self.app.test_client()
         return self.app
 
