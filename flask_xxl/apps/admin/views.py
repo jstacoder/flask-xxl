@@ -58,11 +58,11 @@ class AdminPageView(BaseView):
 
     def get(self):
         if not 'content' in request.endpoint:
-            from page.models import Page
+            from ..page.models import Page
             from wtforms import FormField
-            from admin.forms import BaseTemplateForm
-            from auth.models import User
-            from page.models import Template
+            from .forms import BaseTemplateForm
+            from ..auth.models import User
+            from ..page.models import Template
             self._context['choices'] = [(x,x.name) for x in Template.query.all()]
             from ext import db
             form = model_form(Page,db.session,base_class=Form,exclude=['date_added','added_by'])
@@ -75,8 +75,8 @@ class AdminPageView(BaseView):
 
             self._form = PageForm(prefix=False)
         else:
-            from page.forms import EditContentForm
-            from auth.models import User
+            from ..page.forms import EditContentForm
+            from ..auth.models import User
             self._form = EditContentForm
         return self.render()
 
@@ -85,12 +85,12 @@ class AdminPageView(BaseView):
             session['content'] = request.form['content'][:]
             return self.redirect('admin.add_page')
         else:
-            from auth.models import User
-            from admin.forms import BaseTemplateForm
-            from page.models import Template
-            from page.models import Page
+            from ..auth.models import User
+            from .forms import BaseTemplateForm
+            from ..page.models import Template
+            from ..page.models import Page
             from wtforms import FormField
-            from ext import db
+            from ...ext import db
             self._context['choices'] = [(x,x.name) for x in Template.query.all()]
             form = model_form(Page,db.session,base_class=Form,exclude=['date_added','added_by'])
             class PageForm(form):
@@ -243,10 +243,10 @@ class AdminBlockView(BaseView):
     @staticmethod
     @admin.before_app_request
     def check_blocks():
-        from page.models import Block as model
-        from auth.models import User
+        from ..page.models import Block as model
+        from ..auth.models import User
         objs = model.query.all()
-        from app import app
+        from flask import current_app as app
         block_dir = app.config['ROOT_PATH'] + '/' + 'blocks'
         if not os.path.exists(block_dir):
             os.mkdir(block_dir)

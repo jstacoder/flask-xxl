@@ -34,6 +34,9 @@ class NoBlueprintException(Exception):
 class NoExtensionException(Exception):
     pass
 
+class NoInstalledBlueprintsSettingException(Exception):
+    pass
+
 class AppFactory(object):
 
     def __init__(self, config, envvar='PROJECT_SETTINGS', bind_db_object=True):
@@ -72,7 +75,10 @@ class AppFactory(object):
         return module, object_name
 
     def _load_resource(self,typename):
-        for blueprint_path in self.app.config.get('BLUEPRINTS', []):
+        bp_settings_path = ((self.app.config.get('BLUEPRINTS',None) and 'BLUEPRINTS') or (self.app.config.get('INSTALLED_BLUEPRINTS',None) and 'INSTALLED_BLUEPRINTS') or False)
+        if not bp_settings_path:
+                raise NoInstalledBlueprintsSettingException('You must have a setting for either INSTALLED_BLUEPRINTS or BLUEPRINTS')
+        for blueprint_path in self.app.config.get(bp_settings_path, []):
             module_name, object_name = blueprint_path.rsplit('.', 1)
             blueprint_module, bp_name = self._get_imported_stuff_by_path(blueprint_path)
             blueprint = getattr(blueprint_module,bp_name)
@@ -178,14 +184,22 @@ class AppFactory(object):
     def _setup_routes(self,routes):
         for route in routes:
             blueprint,rules = route[0],route[1:]
-            for pattern, view in rules:
+            #for pattern,endpoint,view in rules:
+            for itm in rules:
+                if len(itm) == 3:
+                    pattern,endpoint,view = itm
+                else:
+                    pattern,view = itm
+                    endpoint = None
+            #for pattern,endpoint,view in rules:
                 if self.app.config.get('VERBOSE',False):
                     print '\t\tplugging url Pattern:',pattern
-                    print '\t\tinto View function:',view.func_name
+                    print '\t\tinto View class/function:',hasattr(view,'func_name') and view.view_class.__name__ or view.__name__
+                    print '\t\tat endpoint:',endpoint or view.func_name
                     print
                 if type(blueprint) == type(tuple()):
                     blueprint = blueprint[0]
-                blueprint.add_url_rule(pattern,view.func_name,view_func=view)
+                blueprint.add_url_rule(pattern,endpoint or view.func_name,view_func=hasattr(view,'func_name') and view or view.as_view(endpoint))
             if not blueprint in self.app.blueprints:
                 if self.app.config.get('VERBOSE',False):
                     print '\n\t\t\tNow registering {} as blueprint\n\n'.format(str(blueprint.name))

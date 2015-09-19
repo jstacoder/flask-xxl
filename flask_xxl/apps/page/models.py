@@ -15,6 +15,11 @@ from flask_xxl.basemodels import AuditMixin,BaseMixin as Model
 
 app_base_dir = os.path.abspath(os.path.dirname(__file__))
 
+class Template(Model):
+    name = sq.Column(sq.String(255))
+
+class Block(Model):
+    name = sq.Column(sq.String(255))
 
 class Page(Model):
 
