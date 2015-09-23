@@ -63,9 +63,9 @@ class BaseMixin(Base):
 
     @classproperty
     def session(cls):
-        if cls._session is None:
-            cls._session = scoped_session(sessionmaker(bind=cls.engine))()
-        return cls._session
+        if BaseMixin._session is None:
+            BaseMixin._session = scoped_session(sessionmaker(bind=cls.engine))()
+        return BaseMixin._session
         
     @classproperty
     def query(cls):
