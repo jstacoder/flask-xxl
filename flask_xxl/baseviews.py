@@ -3,6 +3,7 @@ from flask.views import MethodView
 from flask.templating import render_template
 from flask.helpers import url_for
 from flask import redirect, flash
+from inflection import pluralize
 from wtforms.form import FormMeta
 from .basemodels import classproperty
 
@@ -11,24 +12,51 @@ is_verbose = lambda: os.environ.get('VERBOSE') and True or False
 
 class Flasher(object):
     DEFAULT_CATEGORY = 'warning'
+    WARNING_CLASS = 'warning'
+    INFO_CLASS = 'info'
+    SUCCESS_CLASS = 'success'
+    ERROR_CLASS = 'danger'
+
+    def __init__(self,default=None,class_map=None):
+        if default:
+            self.DEFAULT_CATEGORY = default
+        if class_map:
+            self._set_classes(class_map)
+
+    def _set_classes(self,class_map):
+        default_map = {
+            'success':self.SUCCESS_CLASS,
+            'warning':self.WARNING_CLASS,
+            'error':self.ERROR_CLASS,
+            'info':self.INFO_CLASS
+        }
+        for k in class_map:
+            default_map[k] = class_map.get(k)
+
 
     def flash(self,msg,cat=None):
         cat = cat or self.DEFAULT_CATEGORY
-        flash(msg,cat)
+        return flash(msg,cat)
 
-    def add_warning(self,*args,**kwargs):
-        self.flash(*args,**kwargs)
+    def add_warning(self,msg):
+        return self.flash(msg,self.WARNING_CLASS)
 
     def add_error(self,msg):
-        self.flash(msg=msg,cat='danger')
+        return self.flash(msg,self.ERROR_CLASS)
 
     def add_info(self,msg):
-        self.flash(msg,'info')
+        return self.flash(msg,self.INFO_CLASS)
 
     def add_success(self,msg):
-        self.flash(msg,'success')
+        return self.flash(msg,self.SUCCESS_CLASS)
 
-class BaseView(MethodView,Flasher):
+
+class PostViewAddon(object):
+    def _process_post(self):
+        self.post_data = ((request.data and json.loads(request.data)) if not request.form else dict(request.form.items())) if not request.mimetype == 'application/json' else request.json
+
+
+class BaseView(MethodView):
     _template = None
     _form = None
     _context = {}
@@ -36,6 +64,31 @@ class BaseView(MethodView,Flasher):
     _obj_id = None
     _form_args = {}
     _default_view_routes = {}
+    _flasher = None
+    _flasher_class_map = None
+
+    def __init__(self,*args,**kwargs):
+        super(BaseView,self).__init__(*args,**kwargs)
+        if self._flasher_class_map is not None:
+            self._flasher = Flasher(class_map=self._flasher_class_map)
+        else:
+            self._flasher = Flasher()
+
+
+    def flash(self,msg):
+        return self.flasher.flash(msg)
+
+    def success(self,msg):
+        return self._flasher.add_success(msg)
+
+    def warning(self,msg):
+        return self._flasher.add_warning(msg)
+
+    def info(self,msg):
+        return self._flasher.add_info(msg)
+
+    def error(self,msg):
+        return self._flasher.add_danger(msg)
 
     @classmethod
     def _add_default_routes(cls,app=None):        
@@ -43,7 +96,6 @@ class BaseView(MethodView,Flasher):
             if is_verbose():
                 print 'attaching',route,'to view func',endpoint
             app.add_url_rule(route,endpoint,view_func=cls.as_view(endpoint))
-
 
     def render(self,**kwargs):
         if self._template is None:
@@ -68,8 +120,6 @@ class BaseView(MethodView,Flasher):
                         inner_field = getattr(getattr(field,field.__name__),getattr(fiels.__name__))
                         if hasattr(inner_field,'choices'):
                             setattr(inner_field,'choices',choices)
-                # the 6 lines above replace the line below, delete it once we verify it works
-                #self._context['form'].template.template.choices = choices
             for f,v in self._form_args.items():
                 self._form.__dict__[f].data = v
         return render_template(self._template,**self._context)
@@ -130,6 +180,7 @@ class ModelView(BaseView):
     def add(self,**kwargs):
         tmp = self._model(**kwargs)
         tmp.save()
+        return tmp
 
     def update(self,model_id,**kwargs):
         tmp = self._model.query.filter_by(self._model.id==model_id).first()
@@ -143,10 +194,26 @@ class ModelView(BaseView):
         tmp.save()
         if rtn: return tmp
 
-    def get_by_id(self,model_id):
-        tmp = self._model.get_by_id(model_id)
-        return tmp
+    def get_all(self):
+        return self._model.get_all()
 
+    def get_by_id(self,model_id):
+        return self._model.get_by_id(model_id)
+
+class AddModelView(ModelView,PostViewAddon):
+    def post(self):
+        self._process_post()
+        return jsonify(**self.add(**self.post_data).to_json())
+
+class ListModelView(ModelView):
+    def get(self):
+        name = pluralize(self._model.__name__)
+        return jsonify(name=[m.to_json() for m in self.get_all()])
+
+class ViewModelView(ModelView):
+    def get(self,item_id):
+        m = self.get_by_id(item_id)
+        return jsonify(**m.to_json())
 
 class ModelAPIView(ModelView):
     __abstract__ = True
