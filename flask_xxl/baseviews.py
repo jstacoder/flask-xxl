@@ -203,6 +203,7 @@ class ModelView(BaseView):
 
 class AddModelView(ModelView,PostViewAddon):
     _success_endpoint = None
+    _success_message = 'You successfully added an item'
     
     def get(self):
         return self.render()
@@ -210,7 +211,7 @@ class AddModelView(ModelView,PostViewAddon):
     def post(self):
         self._process_post()
         self._context['obj'] = self._model(**self.post_data).save()
-        
+        self.success(self._success_message)
         return self.redirect(self._success_endpoint or '.index')
 
 
