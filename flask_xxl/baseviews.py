@@ -175,7 +175,7 @@ class ModelView(BaseView):
                 self._context['object'] = self.get_by_id(model_id)
             else:
                 self._context['object'] = self._model()
-            self.context['model'] = self._model
+            self._context['model'] = self._model
         return super(ModelView,self).render(**kwargs)
 
     def add(self,**kwargs):
