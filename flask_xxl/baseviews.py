@@ -2,7 +2,7 @@ import os
 from flask.views import MethodView
 from flask.templating import render_template
 from flask.helpers import url_for
-from flask import redirect, flash
+from flask import redirect, flash, request
 from inflection import pluralize
 from wtforms.form import FormMeta
 from .basemodels import classproperty
