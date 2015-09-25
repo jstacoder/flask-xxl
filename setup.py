@@ -1,4 +1,4 @@
-VERSION = '0,9,5'
+VERSION = '0,9,6'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob

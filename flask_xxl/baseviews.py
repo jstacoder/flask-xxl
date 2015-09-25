@@ -163,11 +163,12 @@ class ModelView(BaseView):
     _model = None
 
     def render(self,**kwargs):
+        alt_model_id = '{0}_id'.format(self._model.__name__.lower())
         if self._model is not None:
             if 'model_id' in kwargs:
                 model_id = kwargs.pop('model_id')
-            elif self._model.__name__ + '_id' in kwargs:
-                model_id = kwargs.pop(self._model.__name__+'_id')
+            elif alt_model_id in kwargs:
+                model_id = kwargs.pop('alt_model_id')
             else:
                 model_id = None
             if model_id is not None:
@@ -201,6 +202,19 @@ class ModelView(BaseView):
         return self._model.get_by_id(model_id)
 
 class AddModelView(ModelView,PostViewAddon):
+    _success_endpoint = None
+    
+    def get(self):
+        return self.render()
+
+    def post(self):
+        self._process_post()
+        self._context['obj'] = self._model(**self.post_data).save()
+        
+        return self.redirect(self._success_endpoint or '.index')
+
+
+def AddModelApiView(ModelView,PostViewAddon):
     def post(self):
         self._process_post()
         return jsonify(**self.add(**self.post_data).to_json())
