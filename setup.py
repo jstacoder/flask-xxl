@@ -8,7 +8,7 @@ def get_description():
 
 def get_version():
     l,m,s = VERSION.split(',')
-    return '{}.{}.{}'.format(l,m,s).strip()
+    return '{0}.{1}.{2}'.format(l,m,s).strip()
 
 data = os.walk(os.path.dirname(__file__))
 
