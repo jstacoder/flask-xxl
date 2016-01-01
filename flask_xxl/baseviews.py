@@ -118,7 +118,7 @@ class BaseView(MethodView):
             if choices:
                 for field in self._context['form']:
                     if hasattr(field,field.__name__) and hasattr(getattr(field,field.__name__),field.__name__):
-                        inner_field = getattr(getattr(field,field.__name__),getattr(fiels.__name__))
+                        inner_field = getattr(getattr(field,field.__name__),getattr(field.__name__))
                         if hasattr(inner_field,'choices'):
                             setattr(inner_field,'choices',choices)
             for f,v in self._form_args.items():
