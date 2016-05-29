@@ -32,7 +32,9 @@ class Flasher(object):
             'info':self.INFO_CLASS
         }
         for k in class_map:
-            default_map[k] = class_map.get(k)
+            tmp = class_map.get(k)
+            if tmp is not None:
+                default_map[k] = tmp
 
 
     def flash(self,msg,cat=None):
