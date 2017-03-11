@@ -162,8 +162,8 @@ class AppFactory(object):
                 raise NoBlueprintException('No {bp_name} blueprint found'.format(bp_name=b_name))
 
     def _register_routes(self):
-	if self._routes_registered is None:
-            self._routes_registered = True
+	if AppFactory._routes_registered is None:
+            AppFactory._routes_registered = True
             if self.app.config.get('VERBOSE',False):
                 print 'starting routing'
             for url_module in self.app.config.get('URL_MODULES',[]):
@@ -180,7 +180,8 @@ class AppFactory(object):
                     raise NoRouteModuleException('No {r_name} url module found'.format(r_name=r_name))
             if self.app.config.get('VERBOSE',False):
                 print 'Finished registering blueprints and url routes'
-
+        else:
+            print 'skip[ped'    
 
     def _setup_routes(self,routes):
         for route in routes:
