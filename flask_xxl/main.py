@@ -38,6 +38,7 @@ class NoInstalledBlueprintsSettingException(Exception):
     pass
 
 class AppFactory(object):
+    _routes_registered = None
 
     def __init__(self, config, envvar='PROJECT_SETTINGS', bind_db_object=True):
         self.app_config = config
@@ -161,24 +162,24 @@ class AppFactory(object):
                 raise NoBlueprintException('No {bp_name} blueprint found'.format(bp_name=b_name))
 
     def _register_routes(self):
-        if self.app.config.get('VERBOSE',False):
-            print 'starting routing'
-        for url_module in self.app.config.get('URL_MODULES',[]):
+	if self._routes_registered is None:
+            self._routes_registered = True
             if self.app.config.get('VERBOSE',False):
-                #print url_module
-                pass
-            module,r_name = self._get_imported_stuff_by_path(url_module)
-            if self.app.config.get('VERBOSE',False):
-                pass
-                #print module
-            if r_name == 'routes' and hasattr(module,r_name):
+                print 'starting routing'
+            for url_module in self.app.config.get('URL_MODULES',[]):
+                if self.app.config.get('VERBOSE',False):                
+                    pass
+                module,r_name = self._get_imported_stuff_by_path(url_module)
                 if self.app.config.get('VERBOSE',False):
-                    print '\tsetting up routing for {} with\n\troute module {}\n'.format(module.__package__,module.__name__)
-                self._setup_routes(getattr(module,r_name))
-            else:
-                raise NoRouteModuleException('No {r_name} url module found'.format(r_name=r_name))
-        if self.app.config.get('VERBOSE',False):
-            print 'Finished registering blueprints and url routes'
+                    pass                
+                if r_name == 'routes' and hasattr(module,r_name):
+                    if self.app.config.get('VERBOSE',False):
+                        print '\tsetting up routing for {} with\n\troute module {}\n'.format(module.__package__,module.__name__)
+                    self._setup_routes(getattr(module,r_name))
+                else:
+                    raise NoRouteModuleException('No {r_name} url module found'.format(r_name=r_name))
+            if self.app.config.get('VERBOSE',False):
+                print 'Finished registering blueprints and url routes'
 
 
     def _setup_routes(self,routes):
