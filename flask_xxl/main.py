@@ -181,7 +181,15 @@ class AppFactory(object):
             if self.app.config.get('VERBOSE',False):
                 print 'Finished registering blueprints and url routes'
         else:
-            print 'skip[ped'    
+            if self.app.config.get('VERBOSE',False):
+                print 'skipped'    
+
+    def _check_for_registered_blueprint(self, bp):
+        found = False
+        for name in [str(x) for x in self.app.blueprints]:
+            if bp.__name__.split('.')[-1] in name:
+                found = True
+        return found
 
     def _setup_routes(self,routes):
         for route in routes:
@@ -202,7 +210,7 @@ class AppFactory(object):
                 if type(blueprint) == type(tuple()):
                     blueprint = blueprint[0]
                 blueprint.add_url_rule(pattern,endpoint or view.func_name,view_func=hasattr(view,'func_name') and view or view.as_view(endpoint))
-            if not blueprint in self.app.blueprints:
+            if not self._check_for_registered_blueprint(blueprint):
                 if self.app.config.get('VERBOSE',False):
                     print '\n\t\t\tNow registering {} as blueprint\n\n'.format(str(blueprint.name))
                 self.app.register_blueprint(blueprint)
