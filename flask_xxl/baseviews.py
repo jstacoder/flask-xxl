@@ -152,6 +152,10 @@ class BaseView(MethodView):
     def get_env(self):
         from flask import current_app
         return current_app.create_jinja_environment()
+    
+    @property
+    def flasher(self):
+        return self._flasher
 
 
 class ModelView(BaseView):
