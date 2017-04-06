@@ -187,7 +187,7 @@ class AppFactory(object):
     def _check_for_registered_blueprint(self, bp):
         found = False
         for name in [str(x) for x in self.app.blueprints]:
-            if bp.__name__.split('.')[-1] in name:
+            if bp.__class__.__name__.split('.')[-1] in name:
                 found = True
         return found
 
