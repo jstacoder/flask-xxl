@@ -56,7 +56,7 @@ class AppFactory(object):
         self._bind_extensions()
         #self._register_blueprints()
         self._register_routes()
-        self._load_models()
+        #self._load_models()
         self._load_views()
         self._register_context_processors()
         self._register_template_filters()
