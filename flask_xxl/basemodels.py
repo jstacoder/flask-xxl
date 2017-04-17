@@ -153,13 +153,14 @@ class AuditMixin(object):
 
 def _clean_name(name):
     names = name.split('_')
+    name = names[0].title()
+
     if len(names) > 1:
         if len(names) == 2:
-            name = names[0].title() + ' ' + names[-1].title()
+            name += ' ' + names[-1].title()
         else:
-            name = names[0].title() + ' {} '.format(' '.join(map(str,names[1:-1]))) + names[-1].title()
-    else:
-        name = names[0].title()
+            name += ' {} '.format(' '.join(map(str,names[1:-1]))) + names[-1].title()
+
     return name
 
 class DBObject(object):
