@@ -31,7 +31,7 @@ get_engine = lambda: create_engine(os.environ.get('DATABASE_URI') or current_app
 
 Base = declarative_base()
 
-    
+
 class SQLAlchemyMissingException(Exception):
     pass
 
@@ -56,7 +56,7 @@ class BaseMixin(Base):
            BaseMixin._engine = get_engine()
         BaseMixin._engine.echo = echo_sql()
         return BaseMixin._engine
-        
+
     @declared_attr
     def id(self):
         return Column(Integer,primary_key=True)
@@ -66,17 +66,17 @@ class BaseMixin(Base):
         if BaseMixin._session is None:
             BaseMixin._session = scoped_session(sessionmaker(bind=cls.engine))()
         return BaseMixin._session
-        
+
     @classproperty
     def query(cls):
         if cls._query is None:
             cls._query = cls.session.query(cls)
         return cls._query
-    
+
     @declared_attr
     def __tablename__(self):
         return underscore(pluralize(self.__name__))
-    
+
     @classmethod
     def get_by_id(cls, id):
         if any(
@@ -85,9 +85,9 @@ class BaseMixin(Base):
         ):
             return cls.query.get(int(id))
         return None
-    
+
     @classmethod
-    def get_all(cls):        
+    def get_all(cls):
         return cls.query.all()
 
     @classmethod
@@ -108,7 +108,7 @@ class BaseMixin(Base):
         except Exception, e:
             if not testing:
                 raise e
-            print e.message            
+            print e.message
             return False
         return self
 
@@ -135,11 +135,11 @@ class BaseMixin(Base):
             if not attr in exclude:
                 if not attr in [x[0] for x in rtn]:
                     if not attr.startswith('_') and not attr.endswith('id'):
-                        if not callable(getattr(cls,attr)):  
+                        if not callable(getattr(cls,attr)):
                             rtn.append((attr,_clean_name(attr)))
         return rtn
 
-    
+
 class AuditMixin(object):
     __abstract__ = True
 
@@ -170,7 +170,7 @@ class DBObject(object):
     @staticmethod
     def check_ctx():
         return stack.top is not None
-    
+
     @classproperty
     def session(cls):
         sess = cls._session
@@ -180,11 +180,11 @@ class DBObject(object):
 
     @classproperty
     def engine(cls):
-        engine = cls._engine 
+        engine = cls._engine
         if engine is None:
-            engine = cls._engine = cls.check_ctx() and current_app.config.get('DATABASE_URI') or os.environ.get('DATABASE_URI')
+            engine = cls._engine = cls.check_ctx() and create_engine(current_app.config.get('DATABASE_URI') or os.environ.get('DATABASE_URI'))
         return engine
-    
+
     @classproperty
     def metadata(cls):
         meta = cls._metadata

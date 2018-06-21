@@ -56,7 +56,7 @@ class AppFactory(object):
         self._bind_extensions()
         #self._register_blueprints()
         self._register_routes()
-        #self._load_models()
+        self._load_models()
         self._load_views()
         self._register_context_processors()
         self._register_template_filters()
@@ -153,7 +153,7 @@ class AppFactory(object):
         self._bp = {}
         for blueprint_path in self.app.config.get('BLUEPRINTS', []):
             module, b_name = self._get_imported_stuff_by_path(blueprint_path)
-            if hasattr(module, b_name):    
+            if hasattr(module, b_name):
                 #self.app.register_blueprint(getattr(module, b_name))
                 self._bp[b_name] = getattr(module,b_name)
                 if self.app.config.get('VERBOSE',False):
@@ -162,16 +162,16 @@ class AppFactory(object):
                 raise NoBlueprintException('No {bp_name} blueprint found'.format(bp_name=b_name))
 
     def _register_routes(self):
-	if AppFactory._routes_registered is None:
+        if AppFactory._routes_registered is None:
             AppFactory._routes_registered = True
             if self.app.config.get('VERBOSE',False):
                 print 'starting routing'
             for url_module in self.app.config.get('URL_MODULES',[]):
-                if self.app.config.get('VERBOSE',False):                
+                if self.app.config.get('VERBOSE',False):
                     pass
                 module,r_name = self._get_imported_stuff_by_path(url_module)
                 if self.app.config.get('VERBOSE',False):
-                    pass                
+                    pass
                 if r_name == 'routes' and hasattr(module,r_name):
                     if self.app.config.get('VERBOSE',False):
                         print '\tsetting up routing for {} with\n\troute module {}\n'.format(module.__package__,module.__name__)
@@ -182,7 +182,7 @@ class AppFactory(object):
                 print 'Finished registering blueprints and url routes'
         else:
             if self.app.config.get('VERBOSE',False):
-                print 'skipped'    
+                print 'skipped'
 
     def _check_for_registered_blueprint(self, bp):
         found = False

@@ -1,4 +1,4 @@
-VERSION = '0,9,20'
+VERSION = '0,10,0'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
@@ -49,7 +49,7 @@ config = dict(
             'WTForms==2.0.1',
             'Werkzeug==0.9.6',
             'alembic==0.6.7',
-            'argparse==1.2.1',        
+            'argparse==1.2.1',
             'itsdangerous==0.24',
             'wsgiref==0.1.2',
             'six==1.8.0',

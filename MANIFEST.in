@@ -5,7 +5,7 @@ include manage.py
 
 include flask_xxl/templates/project/.mrbob.ini
 include flask_xxl/templates/blueprint/.mrbob.ini
-recursive-include ./flask_xxl/templates *
+recursive-include flask_xxl/templates *
 recursive-include flask_xxl/templates/project *
 recursive-include flask_xxl/templates/blueprint *
-
+recursive-include flask_xxl/apps *
