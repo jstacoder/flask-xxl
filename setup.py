@@ -1,4 +1,4 @@
-VERSION = '0,10,0'
+VERSION = '0,10,1'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
@@ -26,7 +26,7 @@ def get_pkg_data():
     return pkg_data
 
 config = dict(
-        name='flask-xxl',
+        name='flask-xl',
         version=get_version(),#'0.0.9',
         include_package_data=True,
         author='Kyle Roux',

@@ -61,8 +61,17 @@ class AppFactory(object):
         self._register_context_processors()
         self._register_template_filters()
         self._register_template_extensions()
+        self._register_middlewares()
 
         return self.app
+
+    def _register_middlewares(self):
+        for middleware_path in self.app.config.get('MIDDLEWARE', []):
+            module_name, middleware_name = middleware_path.rsplit('.', 1)
+            module_name, _ = self._get_imported_stuff_by_path(middleware_path)
+            middleware = getattr(module_name, middleware_name, None)
+            if middleware is not None:
+                self.app.wsgi_app = middleware(self.app.wsgi_app)
 
     def _set_path(self):
         sys.path.append(self.app.config.get('ROOT_PATH',''))
