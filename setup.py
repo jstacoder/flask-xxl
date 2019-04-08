@@ -1,4 +1,4 @@
-VERSION = '0,10,2'
+VERSION = '0,10,4'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
@@ -26,7 +26,7 @@ def get_pkg_data():
     return pkg_data
 
 config = dict(
-        name='flask-xl',
+        name='flaskxxl',
         version=get_version(),#'0.0.9',
         include_package_data=True,
         author='Kyle Roux',
@@ -36,7 +36,7 @@ config = dict(
         packages=['flask_xxl'],
         package_data = {'':findall('flask_xxl')},     #['*.bob','*.html','*.js','*.css','*',]},
         install_requires=[
-            'flask==0.10.1',
+            'flask>=0.10.1',
             'flask-alembic==1.0.2',
             'flask-sqlalchemy==2.0',
             'flask-script==2.0.5',
