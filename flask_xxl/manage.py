@@ -6,11 +6,11 @@
     ~~~~~~
 """
 import subprocess
-from flask.ext.script import Shell, Manager, prompt_bool
-from flask.ext.script.commands import Clean,ShowUrls
-from flask.ext.xxl import flaskxxl
+from flask_script import Shell, Manager, prompt_bool
+from flask_script.commands import Clean,ShowUrls
+from flask_xxl import flaskxxl
 manager = Manager(flaskxxl)
-from flask.ext.xxl.mr_bob import manager as mrbob_manager
+from flask_xxl.mr_bob import manager as mrbob_manager
 import sys
 
 def main(auto=False):
