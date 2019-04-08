@@ -1,4 +1,4 @@
-from flask.ext.script import Manager, prompt_bool
+from flask_script import Manager, prompt_bool
 import os
 from mrbob import cli
 import mrbob
