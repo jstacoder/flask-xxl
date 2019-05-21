@@ -1,5 +1,5 @@
-##Flask-XXL 
-####- A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
+## Flask-XXL  
+#### - A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
 
 [![PyPI version](https://badge.fury.io/py/flask-xxl.svg)](https://badge.fury.io/py/flask-xxl)
 
@@ -11,11 +11,9 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
 
 
 
-<script data-codementor="jstacoder" data-style="badge" data-theme="dark" src="https://cdn.codementor.io/assets/badge.js"></script>
+## What this provides:  
 
-##What this provides:
-
--   Installable blueprints
+-   Installable blueprints  
     -       any blueprints listed in your settings under `BLUEPRINTS` will be imported and registered on your app and if that blueprint is a package any files it contains named `models.py` or `views.py` will be imported as well, so no more need to manualy import your views and models giving odd errors if you dont do it in the exact correct order!!
 
 -   basemodels.py 
