@@ -22,23 +22,25 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
 
 -   basemodels.py 
     -   with a sqlalchemy compatible BaseMixin class
-        - provides many useful CRUD operations, IE: model.save(), model.delete()
-        - `BaseMixin` generates `__tablename__` automaticlly
-        - `BaseMixin` adds an auto incrementing `id` field, as the primary_key to each model
-        - `BaseMixin.session` is current model classes session
-        - `BaseMixin.engine` is the current db engine
-        - `BaseMixin.query` is the models sqlalchemy query from its session
-        - `BaseMixin.get_all()` `->` function to return all of a model
-        - `BaseMixin.get(*args,**kwargs)` `->` get single model by attr values, mainly for id=x
+      - provides many useful CRUD operations, IE: model.save(), model.delete()
+      - `BaseMixin` generates `__tablename__` automaticlly
+      - `BaseMixin` adds an auto incrementing `id` field, as the primary_key to each model
+      - `BaseMixin.session` is current model classes session
+      - `BaseMixin.engine` is the current db engine
+      - `BaseMixin.query` is the models sqlalchemy query from its session
+      - `BaseMixin.get_all()` `->` function to return all of a model
+      - `BaseMixin.get(*args,**kwargs)` `->` get single model by attr values, mainly for id=x
 
 -   baseviews.py
     -   with a BaseView class that is subclassed from Flask.views.MethodView to allow easy definition of view responses to get and post requests.
     -   BaseView also has many builtin helpers/imports to speed development, ie: 
-        -   BaseView.render() calls render_template(BaseView._template,**BaseView._context) easily define either or both in the class variable
-            section of the class and then add,change/ w/e based on logic that happens during request processing. 
-            example:
-            
-            ```python 
+      -   BaseView.render() calls:  
+      `render_template(BaseView._template,**BaseView._context)`
+      easily define either or both in the class variable
+      section of the class and then add or change whatever you need to
+      ie: maybe based on logic that happens during request processing.   
+      for example:            
+      ```python
             class ExampleView(BaseView):
                 _context = {
                     'some_flag':True,
@@ -49,18 +51,18 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
                         self._context['new_flag'] = new_flag
                         self._context['some_flag'] = False
                     return self.render()
-            ```
-        -   <kbd>BaseView.redirect(endpoint)</kbd>
-        is a reimplementation of <code>flask.helpers.redirect</code> which allows you to directly enter the
-        endpoint, so you dont have to run it through <code>url_for()</code> first. 
+        ```
+      
+   -   `BaseView.redirect(endpoint)`
+        is a reimplementation of `flask.helpers.redirect` which allows you to directly enter the
+        endpoint, so you dont have to run it through `url_for()` first. 
         
-        -   <pre>BaseView.get_env()</pre> returns the current jinja2_env
+        - `BaseView.get_env()` -> returns the current jinja2_env        
         
-        
-        - <pre>BaseView.form_validated()</pre> returns true if all forms validate
+        - `BaseView.form_validated()` -> returns true if all forms validate
         
         -   __namespaces imported into BaseView__:
-            BaseView.flash == flask.flash
+            `BaseView.flash == flask.flash`
             
         
             
@@ -68,42 +70,42 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
 -   many builtin template globals(context_processors) to use.
     ie: 
 
-        -   get_block(block_id) <-- requires use of flask.ext.xxl.apps.blog 
-            *   add blocks of html/jinja2/template helpers into the db and access from within templates
-                great for things like header navs or sidebar widgets
+    - `get_block(block_id)` <-- requires use of flask.ext.xxl.apps.blog 
+     *   add blocks of html/jinja2/template helpers 
+         into the db and access from within templates
+         great for things like header navs or sidebar widgets
                 
-        -   get_icon(icon_name,icon_lib) <-- requires use of flask.ext.xxl.apps.blog
-            * flask.ext.xxl.apps.blog comes with 8 icon librarys!!! 
-                -   Glyphicon
-                -   Font Awesome
-                -   Mfg_Labs
-                -   Elusive icons
-                -   Genericons
-                -  and more ... 
-                access any icon anywhere in your templates! even from cms blocks!!!
+    - `get_icon(icon_name,icon_lib)` <-- requires use of flask.ext.xxl.apps.blog
+     * flask.ext.xxl.apps.blog comes with 8 icon librarys!!! 
+      -   Glyphicon
+      -   Font Awesome
+      -   Mfg_Labs
+      -   Elusive icons
+      -   Genericons
+      -  and more ... 
+      access any icon anywhere in your templates! even from cms blocks!!!
                 
-        -   get_model(model_name,blueprint_name)
-            * access any model class from any template (currently only supports sqlalchemy models)
+    - `get_model(model_name,blueprint_name)`
+     * access any model class from any template (currently only supports sqlalchemy models)
             
-        -   get_button(name) 
-            * create buttons in the cms and access from within templates
+    - `get_button(name)`
+     * create buttons in the cms and access from within templates
 
+- AppFactory class with many hooks into settings file (makes use of settings file similar to django)
+  -   settings like:
+    -   CONTEXT_PROCESSORS
+    -   TEMPLATE_FILTERS
+    -   URL_ROUTE_MODULES
+    -   INSTALLED_BLUEPRINTS etc..
 
--   AppFactory class with many hooks into settings file (makes use of settings file similar to django)
-    -   settings like:
-        -   CONTEXT_PROCESSORS
-        -   TEMPLATE_FILTERS
-        -   URL_ROUTE_MODULES
-        -   INSTALLED_BLUEPRINTS etc..
+- new revamped url routing scheme, use a urls.py file in each blueprint to 
+  define the url routes for the blueprint. reference the blueprint and the url
+  route module in the settings file to registar onto the app upon instantiation.  
 
--   new revamped url routing scheme, use a urls.py file in each blueprint to 
-    define the url routes for the blueprint. reference the blueprint and the url
-    route module in the settings file to registar onto the app upon instantiation.
+  define routes like this:
 
-    define routes like this:
-
-    file: urls.py
-    ```python
+  file: urls.py
+  ```python
         from blueprint import blueprint
         from .views import ViewName,SecondView
 
@@ -114,17 +116,18 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
             )
         ]
     ```
-    it basicly is like using app.add_url_rule() method, you
-    just dont have to add <code>view_func=ViewName.as_view(endpoint)</code> or at least the
-    <code>view_func=</code> part.
+    it basicly is like using `app.add_url_rule()` method, you
+    just dont have to add `view_func=ViewName.as_view(endpoint)`
+    or at least the `view_func=` part.
 
 
--   easily start a new project or extend an old one with the flaskxxl-manage.py command line helper tool
-    -   to start a project from scratch
-        <kbd>$ flaskxxl-manage.py start-project</kbd>
+-   easily start a new project or extend an old one  
+    with the flaskxxl-manage.py command line helper tool
+    - to start a project from scratch  
+      `$ flaskxxl-manage.py start-project`
         
-    -   to add to an existing project 
-        <kbd>$ flaskxxl-manage.py start-blueprint</kbd>
+    -   to add to an existing project  
+        `$ flaskxxl-manage.py start-blueprint`
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jstacoder/flask-xxl/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
