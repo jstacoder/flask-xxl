@@ -50,8 +50,9 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
                     if new_flag:
                         self._context['new_flag'] = new_flag
                         self._context['some_flag'] = False
-                    return self.render()
-        ```
+                    return self.render()  
+                    
+    ```                    
       
    -   `BaseView.redirect(endpoint)`
         is a reimplementation of `flask.helpers.redirect` which allows you to directly enter the
@@ -76,13 +77,14 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
          great for things like header navs or sidebar widgets
                 
     - `get_icon(icon_name,icon_lib)` <-- requires use of flask.ext.xxl.apps.blog
-     * flask.ext.xxl.apps.blog comes with 8 icon librarys!!! 
-      -   Glyphicon
-      -   Font Awesome
-      -   Mfg_Labs
-      -   Elusive icons
-      -   Genericons
-      -  and more ... 
+        - flask.ext.xxl.apps.blog comes with 8 icon librarys!!!  
+            * Glyphicon  
+            * Font Awesome
+            * Mfg_Labs
+            * Elusive icons
+            * Genericons
+            * and more ...   
+      
       access any icon anywhere in your templates! even from cms blocks!!!
                 
     - `get_model(model_name,blueprint_name)`
