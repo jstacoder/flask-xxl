@@ -14,7 +14,11 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
 ## What this provides:  
 
 -   Installable blueprints  
-    -       any blueprints listed in your settings under `BLUEPRINTS` will be imported and registered on your app and if that blueprint is a package any files it contains named `models.py` or `views.py` will be imported as well, so no more need to manualy import your views and models giving odd errors if you dont do it in the exact correct order!!
+    - any blueprints listed in your settings under `BLUEPRINTS`   
+    will be imported and registered on your app  
+    if that blueprint is a package, any files it contains named `models.py` or `views.py` will be imported as well,   
+    so no more need to manualy import your views and models  
+    giving odd errors if you dont do it in the exact correct order!!
 
 -   basemodels.py 
     -   with a sqlalchemy compatible BaseMixin class
