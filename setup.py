@@ -47,7 +47,7 @@ config = dict(
             'MarkupSafe==0.23',
             'SQLAlchemy==0.9.8',
             'WTForms==2.0.1',
-            'Werkzeug==0.9.6',
+            'Werkzeug==0.15.3',
             'alembic==0.6.7',
             'argparse==1.2.1',
             'itsdangerous==0.24',
