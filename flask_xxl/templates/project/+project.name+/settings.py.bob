@@ -108,10 +108,11 @@ class BaseConfig(LocalConfig):
     #   def the_func_to_add():
     #       #w/e you want to do
     #   return {name:the_func_to_add}
-    # then in templates name is aviable
+    # then in templates name is available
     ######################################################
 
     CONTEXT_PROCESSORS = [
+            'flask.ext.xxl.context_processors.add_get_model',
             #'flask.ext.xxl.context_processors.add_is_page',
             #'flask.ext.xxl.context_processors.common_context',
             #'flask.ext.xxl.context_processors.common_forms',

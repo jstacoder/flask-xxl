@@ -1,4 +1,4 @@
-VERSION = '0,10,6'
+VERSION = '0,10,4'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
@@ -47,7 +47,7 @@ config = dict(
             'MarkupSafe==0.23',
             'SQLAlchemy==0.9.8',
             'WTForms==2.0.1',
-            'Werkzeug==0.9.6',
+            'Werkzeug==0.15.3',
             'alembic==0.6.7',
             'argparse==1.2.1',
             'itsdangerous==0.24',
