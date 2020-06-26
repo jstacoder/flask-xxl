@@ -88,10 +88,10 @@ _to see this in a real world example take a look at my other projects_ [Flask-Cm
       access any icon anywhere in your templates! even from cms blocks!!!
                 
     - `get_model(model_name,blueprint_name)`
-     * access any model class from any template (currently only supports sqlalchemy models)
+        - access any model class from any template (currently only supports sqlalchemy models)
             
     - `get_button(name)`
-     * create buttons in the cms and access from within templates
+        - create buttons in the cms and access from within templates
 
 - AppFactory class with many hooks into settings file (makes use of settings file similar to django)
   -   settings like:
