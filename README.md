@@ -1,7 +1,7 @@
 ## Flask-XXL  
 #### - A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
 
-[![PyPI version](https://badge.fury.io/py/flask-xxl.svg)](https://badge.fury.io/py/flask-xxl)
+[![PyPI version](https://badge.fury.io/py/flaskxxl.svg)](https://badge.fury.io/py/flaskxxl)
 
 [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/jstacoder)
 

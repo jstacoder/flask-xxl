@@ -1,10 +1,10 @@
-VERSION = '0,10,4'
+VERSION = '0,10,8'
 import os
 from setuptools import setup, find_packages,findall
 from glob import glob
 
 def get_description():
-    return open('README.txt','r').read()
+    return open('README.md','r').read()
 
 def get_version():
     l,m,s = VERSION.split(',')
@@ -33,6 +33,7 @@ config = dict(
         author_email='kyle@level2designs.com',
         description='quick way to design large flask projects',
         long_description=get_description(),
+        long_description_content_type='text/markdown',
         packages=['flask_xxl'],
         package_data = {'':findall('flask_xxl')},     #['*.bob','*.html','*.js','*.css','*',]},
         install_requires=[
