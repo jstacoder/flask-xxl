@@ -1,6 +1,6 @@
 ## Flask-XXL  
 #### - A best practices approach to creating larger web apps with Flask, in an attempt to make Flask feel like it is as capable, if not more, than __Django__.
-this ia na amazing program best in the world
+this is an amazing program best in the world
 [![PyPI version](https://badge.fury.io/py/flaskxxl.svg)](https://badge.fury.io/py/flaskxxl)
 
 [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/jstacoder)
