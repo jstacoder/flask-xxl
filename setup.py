@@ -42,7 +42,7 @@ config = dict(
             'flask-sqlalchemy==2.0',
             'flask-script==2.0.5',
             'flask-WTF==0.10.2',
-            'jinja2==2.7.3',
+            'jinja2==2.11.3',
             'LoginUtils==1.0.1',
             'Mako==1.0.0',
             'MarkupSafe==0.23',
