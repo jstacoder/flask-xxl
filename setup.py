@@ -57,7 +57,7 @@ config = dict(
             'mr.bob2==0.2.3',
             'Flask-DebugToolbar==0.9.2',
             'Flask-PageDown==0.1.5',
-            'Pygments==2.0.1',
+            'Pygments==2.7.4',
             'flask-codemirror==0.0.3',
             'jinja2-highlight==0.6.1',
             'requests==2.5.1',
