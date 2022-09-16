@@ -44,7 +44,7 @@ config = dict(
             'flask-WTF==0.10.2',
             'jinja2==2.7.3',
             'LoginUtils==1.0.1',
-            'Mako==1.0.0',
+            'Mako==1.2.2',
             'MarkupSafe==0.23',
             'SQLAlchemy==0.9.8',
             'WTForms==2.0.1',
